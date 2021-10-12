@@ -6,12 +6,13 @@
 - A GCP account
 - Install and configure [gcloud-sdk] (https://cloud.google.com/sdk/docs/quickstarts)
 
-# Things to consider:
+# Steps performed:
 
 - [ ] DNS (Domain and NS)
-- [ ] Network: VPC and subnet
+- [x] Network: VPC and subnet
 - [ ] Permissions: IAM
-- [ ] ECR
+- [ ] Dockerfile
+- [ ] GCR
 - [ ] GKE
 - [ ] Ingress: Traefik deployed in GKE
 - [ ] App: Deployment in GKE
@@ -21,6 +22,15 @@
 - [ ] Now in GH actions
 
 - [ ] Modify the app to add a new handler.
+
+# Flowchart.
+
+1. "terraform apply" for deliver all the GCP and GKE infrastructure with Traefik configured.
+2. Push a change to the repository in the app folder to trigger a GH action.
+3. The GH action will:
+    3.1
+    3.2
+    3.3
 
 # First step
 
@@ -127,4 +137,16 @@ gcloud beta domains registrations register dangaiden.com
 ---
 
 ## Deploy traefik
+
+Configuration Requirements
+
+All Steps for a Successful Deployment
+
+- [ ] Create a dedicated namespace
+- [ ] Add the Traefik resources definitions
+- [ ] Add the RBAC for the Traefik custom resources
+- [ ] Use a custom Traefik Deployment
+- [ ]   Enable the kubernetesCRD provider
+- [ ]   Apply the needed kubernetesCRD provider configuration
+- [ ] Add all necessary Traefik custom resources
 
