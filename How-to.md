@@ -1,9 +1,10 @@
 ## Requirements
 
-- Account in GCP.
-- Install gcloud: https://cloud.google.com/sdk/docs/install
 - APIs are enabled with Terraform so you don't need to do it in the first deployment.
-
+- A GitHub account obviously.
+- Terraform installed (v1.0.8 used)
+- A GCP account
+- Install and configure [gcloud-sdk] (https://cloud.google.com/sdk/docs/quickstarts)
 
 # First step
 
@@ -12,9 +13,13 @@ Welcome! This command will take you through the configuration of gcloud.
 
 Your current configuration has been set to: [default]
 
+# Login
+
+gcloud auth application-default login
+
 # Create project
 
-$PROJECT_NAME =
+$PROJECT_NAME = "your_project_name"
 gcloud projects create $PROJECT_NAME --set-as-default
 
 ## Alternative
@@ -43,7 +48,7 @@ These credentials will be used by any library that requests Application Default 
 
 Quota project "dangaiden-go-cicd" was added to ADC which can be used by Google client libraries for billing and quota. Note that some services may still bill the project owning the resource.
 
-## Enabling the Billing (needed) API.
+## Enabling the Billing (needed) API and other APIs.
 
 ``Billing required
 Compute Engine API requires a project with a billing account.``
@@ -51,3 +56,24 @@ Compute Engine API requires a project with a billing account.``
 $ gcloud services enable compute.googleapis.com
 Operation "operations/acf.p2-387603574801-7b56174e-8427-4c66-b4f6-71c4fb5f6de7" finished successfully.
 
+gcloud services enable compute.googleapis.com
+gcloud services enable container.googleapis.com
+
+## Create VPC (Global)
+
+gcloud compute networks create vpc-cicd --subnet-mode custom
+
+## Create FW rules
+
+gcloud compute firewall-rules create fwr-permit-all --network vpc-cicd --allow tcp,udp,icmp --source-ranges 0.0.0.0/0
+
+## Create subnet
+
+gcloud compute networks subnets create vpc-cicd-snet-1 --network vpc-cicd --region us-west1 --range 10.10.1.0/24
+
+## Provision GKE cluster.
+
+gcloud containers clusters create gke-app-1 --cluster-version=v1.21\
+--logging=SYSTEM,WORKLOAD --machine-type=f1-micro --max-modes-per-pool=3\
+--monitoring=SYSTEM --network --preemtible --enable-master-authorized-networks\
+--master-authorized-networks=0.0.0.0/0
