@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine
+FROM golang:1.16
 RUN apt-get update && apt-get --assume-yes install jq
 WORKDIR /go/src/app
 COPY app .

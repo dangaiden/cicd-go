@@ -5,6 +5,9 @@
 - Terraform installed (v1.0.8 used)
 - A GCP account
 - Install and configure [gcloud-sdk] (https://cloud.google.com/sdk/docs/quickstarts)
+- Kubernetes 1.14+
+- Helm version 3.x is [installed] (https://helm.sh/docs/intro/install/)
+
 
 # Steps performed:
 
@@ -12,9 +15,9 @@
 - [x] Network: VPC and subnet
 - [ ] Permissions: IAM
 - [ ] Dockerfile
-- [ ] GCR
-- [ ] GKE
-- [ ] Ingress: Traefik deployed in GKE
+- [x] GCR
+- [x] GKE
+- [x] Ingress: Traefik deployed in GKE
 - [ ] App: Deployment in GKE
 
 - [ ] Perform everything in TF
@@ -31,6 +34,7 @@
     3.1
     3.2
     3.3
+
 
 # First step
 
@@ -94,16 +98,19 @@ gcloud compute firewall-rules create fwr-permit-all --network vpc-cicd --allow t
 
 gcloud compute networks subnets create vpc-cicd-snet-1 --network vpc-cicd --region us-west1 --range 10.10.1.0/24
 
+# Create External IP address
+
+gcloud compute addresses create public-ipaddr --project=dangaiden-go-cicd --network-tier=STANDARD --region=us-central1
+
 # Provision GKE cluster.
 
-CLUSTER_NAME="dan-app-1"
-
-gcloud container clusters create $CLUSTER_NAME --cluster-version=1.21\
+gcloud container clusters create gke-app-1 --cluster-version=1.21\
  --logging=SYSTEM,WORKLOAD --machine-type=e2-standard-2\
  --monitoring=SYSTEM --network vpc-cicd --subnetwork=vpc-cicd-snet-1 --preemptible --enable-master-authorized-networks\
  --master-authorized-networks=0.0.0.0/0 --zone us-west1-c
 
 ~OUTPUT:
+
 Creating cluster gke-app-1 in us-west1-c...done.                                                                                                                                                               
 Created [https://container.googleapis.com/v1/projects/dangaiden-go-cicd/zones/us-west1-c/clusters/gke-app-1].
 To inspect the contents of your cluster, go to: https://console.cloud.google.com/kubernetes/workload_/gcloud/us-west1-c/gke-app-1?project=dangaiden-go-cicd
@@ -111,47 +118,64 @@ kubeconfig entry generated for gke-app-1.
 NAME       LOCATION    MASTER_VERSION   MASTER_IP      MACHINE_TYPE   NODE_VERSION     NUM_NODES  STATUS
 gke-app-1  us-west1-c  1.21.4-gke.2300  34.83.131.168  e2-standard-2  1.21.4-gke.2300  3          RUNNING
 
+
 $ kubectl get nodes
 NAME                                       STATUS   ROLES    AGE   VERSION
 gke-gke-app-1-default-pool-b2d97aaf-4rm3   Ready    <none>   12m   v1.21.4-gke.2300
 gke-gke-app-1-default-pool-b2d97aaf-sz62   Ready    <none>   12m   v1.21.4-gke.2300
 gke-gke-app-1-default-pool-b2d97aaf-vhx6   Ready    <none>   12m   v1.21.4-gke.2300
 
-# Created generic SA via GUI ???????????????????????????????????????????
+
+# Install traefik with Helm
+
+https://doc.traefik.io/traefik/v2.4/getting-started/install-traefik/#use-the-helm-chart
+
+helm repo add traefik https://helm.traefik.io/traefik
+helm repo update
+helm search repo traefik
+NAME           	CHART VERSION	APP VERSION	DESCRIPTION                                  
+traefik/traefik	10.6.0       	2.5.3      	A Traefik based Kubernetes ingress controller
+
+helm install traefikv2 traefik/traefik -n traefik --create-namespace\
+ --set="additionalArguments={--log.level=DEBUG}"
+
+kubectl apply -f ingressroute-dashboard.yaml
+
+## Checking all is correct
+kubectl -n traefik get all
+
+Access http://traefik-ui.example.com/dashboard/
+
+# Using GCR
+
+- Example with SA
+/gcloud auth login
+/gcloud auth activate-service-account --key-file=.secrets/gcp.json
+/gcloud auth configure-docker -q
+/checkout
+
+## Process
+docker build -t goserver .
+docker tag goserver:latest gcr.io/$PROJECT_NAME/goserver:v1
+docker push gcr.io/$PROJECT_NAME/goserver:v1
+docker pull gcr.io/$PROJECT_NAME/goserver:v1
+---
+- Example
+gcloud auth configure-docker
+docker tag gcr.io/google-samples/hello-app:1.0 gcr.io/$PROJECT_NAME/quickstart-image:tag1
+docker push gcr.io/$PROJECT_NAME/quickstart-image:tag1
+
+# Deploying app
+
+kubectl create namespace application
+kubectl apply -f k8s/app-deployment.yaml
+kubectl apply -f k8s/app-routes.yaml
+
+
+# Created generic SA via GUI
+
+gcloud iam service-accounts create images-sa --display-name="SA for managing Docker images"
 
 genericsa@dangaiden-go-cicd.iam.gserviceaccount.com
 Roles:  Kubernetes Engine Service Agent
 
----
-# Register domain (dangiaden.com)
-
-gcloud beta domains registrations search-domains dangaiden.com
-
-## Check if available
-gcloud beta domains registrations get-register-parameters dangaiden.com
-
-
-## Register domain
-gcloud beta domains registrations register dangaiden.com
-
----
-
-## Deploy traefik
-
-Configuration Requirements
-
-All Steps for a Successful Deployment
-
-- [ ] Create a dedicated namespace
-- [ ] Add the Traefik resources definitions
-- [ ] Add the RBAC for the Traefik custom resources
-- [ ] Use a custom Traefik Deployment
-- [ ]   Enable the kubernetesCRD provider
-- [ ]   Apply the needed kubernetesCRD provider configuration
-- [ ] Add all necessary Traefik custom resources
-
-
-kubectl apply -f crd.yaml
-kubectl apply -f rbac.yaml
-kubectl apply -f deployment.yaml
-kubectl apply -f ingress.yaml
