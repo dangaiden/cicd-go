@@ -59,4 +59,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: traefik-ingress-controller
-    namespace: default
+    namespace: kube-system

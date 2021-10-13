@@ -40,7 +40,7 @@ Welcome! This command will take you through the configuration of gcloud.
 Your current configuration has been set to: [default]
 # Create project
 
-$PROJECT_NAME = "dangaiden-go-cicd"
+PROJECT_NAME="dangaiden-go-cicd"
 gcloud projects create $PROJECT_NAME --set-as-default
 
 ## Alternative
@@ -96,13 +96,14 @@ gcloud compute networks subnets create vpc-cicd-snet-1 --network vpc-cicd --regi
 
 # Provision GKE cluster.
 
-gcloud container clusters create gke-app-1 --cluster-version=1.21\
+CLUSTER_NAME="dan-app-1"
+
+gcloud container clusters create $CLUSTER_NAME --cluster-version=1.21\
  --logging=SYSTEM,WORKLOAD --machine-type=e2-standard-2\
  --monitoring=SYSTEM --network vpc-cicd --subnetwork=vpc-cicd-snet-1 --preemptible --enable-master-authorized-networks\
  --master-authorized-networks=0.0.0.0/0 --zone us-west1-c
 
 ~OUTPUT:
-
 Creating cluster gke-app-1 in us-west1-c...done.                                                                                                                                                               
 Created [https://container.googleapis.com/v1/projects/dangaiden-go-cicd/zones/us-west1-c/clusters/gke-app-1].
 To inspect the contents of your cluster, go to: https://console.cloud.google.com/kubernetes/workload_/gcloud/us-west1-c/gke-app-1?project=dangaiden-go-cicd
@@ -110,14 +111,13 @@ kubeconfig entry generated for gke-app-1.
 NAME       LOCATION    MASTER_VERSION   MASTER_IP      MACHINE_TYPE   NODE_VERSION     NUM_NODES  STATUS
 gke-app-1  us-west1-c  1.21.4-gke.2300  34.83.131.168  e2-standard-2  1.21.4-gke.2300  3          RUNNING
 
-
 $ kubectl get nodes
 NAME                                       STATUS   ROLES    AGE   VERSION
 gke-gke-app-1-default-pool-b2d97aaf-4rm3   Ready    <none>   12m   v1.21.4-gke.2300
 gke-gke-app-1-default-pool-b2d97aaf-sz62   Ready    <none>   12m   v1.21.4-gke.2300
 gke-gke-app-1-default-pool-b2d97aaf-vhx6   Ready    <none>   12m   v1.21.4-gke.2300
 
-# Created generic SA via GUI
+# Created generic SA via GUI ???????????????????????????????????????????
 
 genericsa@dangaiden-go-cicd.iam.gserviceaccount.com
 Roles:  Kubernetes Engine Service Agent
@@ -150,3 +150,8 @@ All Steps for a Successful Deployment
 - [ ]   Apply the needed kubernetesCRD provider configuration
 - [ ] Add all necessary Traefik custom resources
 
+
+kubectl apply -f crd.yaml
+kubectl apply -f rbac.yaml
+kubectl apply -f deployment.yaml
+kubectl apply -f ingress.yaml

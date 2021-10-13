@@ -5,4 +5,4 @@ COPY app .
 EXPOSE 8080
 #RUN  go mod init api && go mod tidy
 
-ENTRYPOINT ["go","run","main.go"]
+ENTRYPOINT ["go","run","server.go"]
