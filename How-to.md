@@ -13,12 +13,13 @@
 
 - [ ] DNS (Domain and NS)
 - [x] Network: VPC and subnet
-- [ ] Permissions: IAM
-- [ ] Dockerfile
+- [x] Permissions: IAM
+- [x] Dockerfile
 - [x] GCR
 - [x] GKE
 - [x] Ingress: Traefik deployed in GKE
-- [ ] App: Deployment in GKE
+- [x] App: Deployment in GKE
+- [ ] Let's encrypt certificates.
 
 - [ ] Perform everything in TF
 
