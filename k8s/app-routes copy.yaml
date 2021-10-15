@@ -7,6 +7,7 @@ metadata:
 
 spec:
   entryPoints:
+    - web
     - websecure
   routes:
     - match: Host(`itgaiden.com`)
@@ -15,12 +16,8 @@ spec:
         - name: go-service
           namespace: application
           port: 80
-  #tls:
-  #  certResolver: route53
-  #  domains:
-  #    - main: "itgaiden.com"
-  tls:                              # [11]
-    secretName: cert-stored-secret         # [12]
+  # tls:                              # [11]
+  #   secretName: supersecret         # [12]
   #   options:                        # [13]
   #     name: opt                     # [14]
   #     namespace: default            # [15]
@@ -30,6 +27,3 @@ spec:
   #     sans:                         # [19]
   #     - a.example.net
   #     - b.example.net
-
-
-  

@@ -7,8 +7,9 @@ metadata:
 spec:
   entryPoints:
     - web
+    - websecure
   routes:
-    - match: Host(`traefik-ui.example.com`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
+    - match: Host(`itgaiden.com`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
       kind: Rule
       services:
         - name: api@internal

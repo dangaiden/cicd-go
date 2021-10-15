@@ -1,26 +1,28 @@
+
+### Project name
+variable "project_id" {
+    type = string
+    description = "Project ID for GCP"
+    default = "dangaiden-tf-project"
+}
+
+### Region and zone
+
 variable "gcp_region" {
     type = string
     description = "Region for the GCP provider"
     default = "us-west1"
 }
 variable "gcp_zone" {
-
     type = string
     description = "Zone for the GCP provider"
-    default = "us-west1"
+    default = "us-west1-c"
 }
 
-# Enable the necessary services on the project for deployments
-resource "google_project_service" "service" {
-  for_each = toset([
-    "compute.googleapis.com",
-    "container.googleapis.com",
-    
-
-  ])
-
-  service = each.key
-
-  project            = google_project.project.project_id
-  disable_on_destroy = false
+variable "vpc_subnet" {
+  type = string
+  description = "CIDR Range for the VPC"
+  default = "10.10.1.0/24"
 }
+
+

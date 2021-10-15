@@ -1,0 +1,5 @@
+http:
+  routers:
+    my-router:
+      rule: "Path(`/go`)"
+      service: go-service

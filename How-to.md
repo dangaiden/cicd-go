@@ -8,7 +8,9 @@
 - Kubernetes 1.14+
 - Helm version 3.x is [installed] (https://helm.sh/docs/intro/install/)
 
+# Useful commands
 
+export KUBECONFIG="$PWD/kubeconfig_{{name}}-eks"
 # Steps performed:
 
 - [ ] DNS (Domain and NS)
@@ -21,9 +23,9 @@
 - [x] App: Deployment in GKE
 - [ ] Let's encrypt certificates.
 
-- [ ] Perform everything in TF
+- [ ] Perform everything in TF (Friday and Saturday)
 
-- [ ] Now in GH actions
+- [ ] Now in GH actions (Sunday?)
 
 - [ ] Modify the app to add a new handler.
 
@@ -105,7 +107,7 @@ gcloud compute addresses create public-ipaddr --project=dangaiden-go-cicd --netw
 
 # Provision GKE cluster.
 
-gcloud container clusters create gke-app-1 --cluster-version=1.21\
+gcloud container clusters create dan-1410-cluster --cluster-version=1.21\
  --logging=SYSTEM,WORKLOAD --machine-type=e2-standard-2\
  --monitoring=SYSTEM --network vpc-cicd --subnetwork=vpc-cicd-snet-1 --preemptible --enable-master-authorized-networks\
  --master-authorized-networks=0.0.0.0/0 --zone us-west1-c
@@ -137,10 +139,13 @@ helm search repo traefik
 NAME           	CHART VERSION	APP VERSION	DESCRIPTION                                  
 traefik/traefik	10.6.0       	2.5.3      	A Traefik based Kubernetes ingress controller
 
+```bash
 helm install traefikv2 traefik/traefik -n traefik --create-namespace\
+ --set allowCrossNamespace=true\
  --set="additionalArguments={--log.level=DEBUG}"
+```
 
-kubectl apply -f ingressroute-dashboard.yaml
+kubectl apply -f k8s/helm_traefik/ingressroute-dashboard.yaml
 
 ## Checking all is correct
 kubectl -n traefik get all
@@ -173,10 +178,73 @@ kubectl apply -f k8s/app-deployment.yaml
 kubectl apply -f k8s/app-routes.yaml
 
 
+# Generate certificates
+
+## Set up an IAM role (Create a Policy in AWS Console)
+
+Policy name: DNS-Route53-role 
+
+Using the JSON: https://cert-manager.io/docs/configuration/acme/dns01/route53/
+
+Paste the content in JSON window:
+
+``` bash
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "route53:GetChange",
+      "Resource": "arn:aws:route53:::change/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "route53:ChangeResourceRecordSets",
+        "route53:ListResourceRecordSets"
+      ],
+      "Resource": "arn:aws:route53:::hostedzone/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "route53:ListHostedZonesByName",
+      "Resource": "*"
+    }
+  ]
+}
+
+```
+
+## Create Access and Secret Keys in AWS
+
+Going to IAM > Add User > Access-Programmatic access
+Name:route53-user
+Custom password: DMEQ72SM@60
+Attach existing policies directly -> DNS-Route53-role 
+
+User:route53-user
+Access key ID:AKIAYYQ7G3ETB3MYRCWH
+Secret access key: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
+
+## We will use this Helm Chart to define some things:
+
+https://github.com/jetstack/cert-manager/blob/master/deploy/charts/cert-manager/values.yaml
+https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+
+- Add the Jetstack Helm repository
+$ helm repo add jetstack https://charts.jetstack.io
+- Install the cert-manager helm chart
+$ helm install cert-manager-153 -n cert-manager --create-namespace\
+ --version v1.5.3 jetstack/cert-manager\
+
+## Create secret in k8s
+
+kubectl create secret generic google-dns-sa \
+  --from-file=key.json=your-service-account.json -n traefik
+
+
 # Created generic SA via GUI
 
 gcloud iam service-accounts create images-sa --display-name="SA for managing Docker images"
 
-genericsa@dangaiden-go-cicd.iam.gserviceaccount.com
-Roles:  Kubernetes Engine Service Agent
-
+gcloud iam service-accounts create k8s-dns-sa --display-name="DNS Service Account"
