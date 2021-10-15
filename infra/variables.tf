@@ -1,9 +1,19 @@
 
+
+
+
 ### Project name
+variable "project_name" {
+    type = string
+    description = "Project ID for GCP"
+    default = "dangaiden"
+}
+
+### Project id
 variable "project_id" {
     type = string
     description = "Project ID for GCP"
-    default = "dangaiden-tf-project"
+    default = "dangaiden"
 }
 
 ### Region and zone

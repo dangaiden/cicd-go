@@ -11,6 +11,10 @@
 # Useful commands
 
 export KUBECONFIG="$PWD/kubeconfig_{{name}}-eks"
+
+# Useful links
+
+https://registry.terraform.io/providers/hashicorp/google/latest/docs
 # Steps performed:
 
 - [ ] DNS (Domain and NS)
@@ -101,7 +105,7 @@ gcloud compute firewall-rules create fwr-permit-all --network vpc-cicd --allow t
 
 gcloud compute networks subnets create vpc-cicd-snet-1 --network vpc-cicd --region us-west1 --range 10.10.1.0/24
 
-# Create External IP address
+# Create External IP address (not needed)
 
 gcloud compute addresses create public-ipaddr --project=dangaiden-go-cicd --network-tier=STANDARD --region=us-central1
 
@@ -142,8 +146,13 @@ traefik/traefik	10.6.0       	2.5.3      	A Traefik based Kubernetes ingress con
 ```bash
 helm install traefikv2 traefik/traefik -n traefik --create-namespace\
  --set allowCrossNamespace=true\
- --set="additionalArguments={--log.level=DEBUG}"
+ --values "traefik-values.yaml"
 ```
+
+helm upgrade traefikv2 traefik/traefik -n traefik --values "traefik-values.yaml"
+
+
+
 
 kubectl apply -f k8s/helm_traefik/ingressroute-dashboard.yaml
 
@@ -222,9 +231,12 @@ Name:route53-user
 Custom password: DMEQ72SM@60
 Attach existing policies directly -> DNS-Route53-role 
 
-User:route53-user
-Access key ID:AKIAYYQ7G3ETB3MYRCWH
-Secret access key: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
+
+
+
+## Create secret in k8s
+
+kubectl create secret generic acme-route53 --from-file=secret-access-key=[YOU_SECRET_ACCESS_KEY_FILE]
 
 ## We will use this Helm Chart to define some things:
 
@@ -234,14 +246,14 @@ https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 - Add the Jetstack Helm repository
 $ helm repo add jetstack https://charts.jetstack.io
 - Install the cert-manager helm chart
-$ helm install cert-manager-153 -n cert-manager --create-namespace\
- --version v1.5.3 jetstack/cert-manager\
+$ helm install cert-manager -n cert-manager --create-namespace \
+ --values "cert-manager-values.yaml" \
+ --version v1.5.3 jetstack/cert-manager
 
-## Create secret in k8s
 
-kubectl create secret generic google-dns-sa \
-  --from-file=key.json=your-service-account.json -n traefik
+## Cluster Issuer
 
+Follow details for: https://cert-manager.io/docs/configuration/acme/dns01/route53/
 
 # Created generic SA via GUI
 
