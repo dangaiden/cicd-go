@@ -1,8 +1,9 @@
+#app-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: go-deployment
-  namespace: application
+  namespace: app
   labels:
     app: go-app
 spec:
@@ -25,7 +26,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: go-service
-  namespace: application
+  namespace: app
 spec:
   selector:
     app: go-app

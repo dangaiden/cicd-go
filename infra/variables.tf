@@ -1,38 +1,97 @@
-
-
-
-
-### Project name
+#####################
+### Project configurations
+#####################
 variable "project_name" {
-    type = string
-    description = "Project ID for GCP"
-    default = "dangaiden"
+  type        = string
+  description = "Project ID for GCP"
+  default     = "october-cicd-go"
 }
-
-### Project id
 variable "project_id" {
-    type = string
-    description = "Project ID for GCP"
-    default = "dangaiden"
+  type        = string
+  description = "Project ID for GCP"
+  default     = "october-cicd-go"
+}
+variable "gcp_service_list" {
+  description = "List of GCP service to be enabled for a project."
+  type        = list(any)
 }
 
-### Region and zone
+#####################
+### GCP Region and zone
+#####################
 
 variable "gcp_region" {
-    type = string
-    description = "Region for the GCP provider"
-    default = "us-west1"
+  type        = string
+  description = "Region for the GCP provider"
+  default     = "us-west1"
 }
 variable "gcp_zone" {
-    type = string
-    description = "Zone for the GCP provider"
-    default = "us-west1-c"
+  type        = string
+  description = "Zone for the GCP provider"
+  default     = "us-west1-c"
 }
 
 variable "vpc_subnet" {
-  type = string
+  type        = string
   description = "CIDR Range for the VPC"
-  default = "10.10.1.0/24"
+  default     = "10.10.1.0/24"
 }
 
+#####################
+### GKE
+#####################
 
+variable "gke_username" {
+  default     = ""
+  description = "gke username"
+}
+
+variable "gke_password" {
+  default     = ""
+  description = "gke password"
+}
+
+variable "gke_num_nodes" {
+  default     = 2
+  description = "number of gke nodes"
+}
+
+variable "master_authorized_networks_cidr_blocks" {
+  type = list(map(string))
+
+  default = [
+    {
+      # External network that can access Kubernetes master through HTTPS. Must
+      # be specified in CIDR notation. This block should allow access from any
+      # address, but is given explicitly to prevent Google's defaults from
+      # fighting with Terraform.
+      cidr_block = "0.0.0.0/0"
+      # Field for users to identify CIDR blocks.
+      display_name = "default"
+    },
+  ]
+
+  description = <<EOF
+Defines up to 20 external networks that can access Kubernetes master
+through HTTPS.
+EOF
+}
+
+#####################
+### 
+#####################
+
+#####################
+### 
+#####################
+
+
+#####################
+### 
+#####################
+
+
+#####################
+### OTHERS
+#####################
+#variable "credentials_file" { }

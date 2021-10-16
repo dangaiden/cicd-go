@@ -1,0 +1,56 @@
+#app-deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-deployment
+  namespace: app
+  labels:
+    app: go-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-app
+  template:
+    metadata:
+      labels:
+        app: go-app
+    spec:
+      containers:
+      - name: go-app
+        image: gcr.io/dangaiden-go-cicd/goserver:v1
+        ports:
+        - containerPort: 8080
+---
+#app-service
+kind: Service
+apiVersion: v1
+metadata:
+  name: go-service
+  namespace: app
+spec:
+  selector:
+    app: go-app
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP
+---
+#app-routes
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: go-ingress
+  namespace: app
+
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`itgaiden.com`)
+      kind: Rule
+      services:
+        - name: go-service
+          namespace: app
+          port: 80

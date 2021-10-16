@@ -3,7 +3,7 @@
 - APIs are enabled with Terraform so you don't need to do it in the first deployment.
 - A GitHub account obviously.
 - Terraform installed (v1.0.8 used)
-- A GCP account
+- A GCP account with a project created and Billing linked
 - Install and configure [gcloud-sdk] (https://cloud.google.com/sdk/docs/quickstarts)
 - Kubernetes 1.14+
 - Helm version 3.x is [installed] (https://helm.sh/docs/intro/install/)
@@ -17,7 +17,7 @@ export KUBECONFIG="$PWD/kubeconfig_{{name}}-eks"
 https://registry.terraform.io/providers/hashicorp/google/latest/docs
 # Steps performed:
 
-- [ ] DNS (Domain and NS)
+- [x] DNS (Domain and NS)
 - [x] Network: VPC and subnet
 - [x] Permissions: IAM
 - [x] Dockerfile
