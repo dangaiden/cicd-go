@@ -18,7 +18,7 @@ resource "google_container_cluster" "primary" {
 
   #network            = google_compute_network.vpc_network.name
   #subnetwork         = var.vpc_subnet
-  min_master_version = "1.21"
+  min_master_version = var.min_master_version
 
 
   ### MASTER AUTHORIZED NETWORKS (EXTERNAL IPs ACCESS)
@@ -52,8 +52,8 @@ resource "google_container_cluster" "primary" {
     }
 
     preemptible  = true
-    machine_type = "e2-standard-2"
-    #tags         = ["gke-node", "${var.project_id}-gke"]
+    machine_type = var.nodes_type
+    tags         = ["gke-node", "${var.project_id}-gke"]
 
   }
 
@@ -61,9 +61,11 @@ resource "google_container_cluster" "primary" {
     enabled = false
   }
 
+  # Timeouts for operations within the node
   timeouts {
     create = "20m"
     update = "20m"
+    delete = "20m"
   }
   depends_on = [
     google_compute_network.vpc_network,
@@ -82,7 +84,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 
   node_config {
     preemptible  = true
-    machine_type = "e2-standard-2"
+    machine_type = var.nodes_type
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     # service_account = google_service_account.default.email
@@ -91,9 +93,12 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     ]
   }
 }
+
+
+
 ############ H E L M #######################
 
-data "google_client_config" "current" {}
+#data "google_client_config" "current" {}
 
 #https://registry.terraform.io/providers/hashicorp/helm/latest/docs
 provider "helm" {
@@ -101,7 +106,7 @@ provider "helm" {
   kubernetes {
     host = google_container_cluster.primary.endpoint
     #?????????IS TOKEN NEEDED??????????????????????????
-    token                  = data.google_client_config.current.access_token
+    #token                  = data.google_client_config.current.access_token
     client_certificate     = base64decode(google_container_cluster.primary.master_auth.0.client_certificate)
     client_key             = base64decode(google_container_cluster.primary.master_auth.0.client_key)
     cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)
@@ -109,7 +114,7 @@ provider "helm" {
 }
 
 #https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release
-resource "helm_release" "traefik" {
+/* resource "helm_release" "traefik" {
   name             = "traefik"
   chart            = "traefik"
   repository       = "https://helm.traefik.io/traefik"
@@ -118,44 +123,37 @@ resource "helm_release" "traefik" {
   version          = "10.0.0"
 
   values = [file("values.yaml")]
+} */
+
+resource "helm_release" "nginx" {
+  name             = "nginx"
+  chart            = "ingress-nginx"
+  repository       = "https://kubernetes.github.io/ingress-nginx"
+  namespace        = "ingress"
+  create_namespace = true
+
+  values = [file("nginx-values.yaml")]
+
+  depends_on = [
+    google_container_node_pool.primary_preemptible_nodes
+  ]
+
 }
 
-
-
 resource "helm_release" "cert-manager" {
-  name = "cert-manager"
-  chart = "cert-manager"
-  repository = "https://charts.jetstack.io"
-  namespace = "cert-manager"
+  name             = "cert-manager"
+  chart            = "cert-manager"
+  repository       = "https://charts.jetstack.io"
+  namespace        = "cert-manager"
   create_namespace = true
 
   set {
     name  = "installCRDs"
     value = "true"
   }
+
+  depends_on = [
+    google_container_node_pool.primary_preemptible_nodes
+  ]
+
 }
-
-
-
-#############################################################
-/*
-output "cl_endpoint" {
-  value     = google_container_cluster.primary.endpoint
-  sensitive = true
-}
-
-output "cl_certificate" {
-  value     = google_container_cluster.primary.master_auth.0.client_certificate
-  sensitive = true
-}
-
-output "cl_key" {
-  value     = google_container_cluster.primary.master_auth.0.client_key
-  sensitive = true
-}
-
-output "cl_ca_certificate" {
-  value     = google_container_cluster.primary.master_auth.0.cluster_ca_certificate
-  sensitive = true
-}
-*/

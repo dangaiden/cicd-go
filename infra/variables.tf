@@ -41,20 +41,6 @@ variable "vpc_subnet" {
 ### GKE
 #####################
 
-variable "gke_username" {
-  default     = ""
-  description = "gke username"
-}
-
-variable "gke_password" {
-  default     = ""
-  description = "gke password"
-}
-
-variable "gke_num_nodes" {
-  default     = 2
-  description = "number of gke nodes"
-}
 
 variable "master_authorized_networks_cidr_blocks" {
   type = list(map(string))
@@ -75,6 +61,16 @@ variable "master_authorized_networks_cidr_blocks" {
 Defines up to 20 external networks that can access Kubernetes master
 through HTTPS.
 EOF
+}
+
+variable "min_master_version" {
+  default     = "1.21"
+  description = "Minimum version for the K8s master node managed by GCP"
+}
+
+variable "nodes_type" {
+  default     = "e2-standard-2"
+  description = "Machine type for GKE nodes"
 }
 
 #####################
