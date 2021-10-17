@@ -1,0 +1,13 @@
+#app-service
+kind: Service
+apiVersion: v1
+metadata:
+  name: go-service
+  namespace: app
+spec:
+  selector:
+    app: go-app
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP
