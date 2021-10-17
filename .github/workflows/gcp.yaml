@@ -69,7 +69,7 @@ jobs:
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
           .
-      run: echo "GKE-CLUSTER-> $GKE_CLUSTER"
+      #run: echo "GKE-CLUSTER-> $GKE_CLUSTER"
 
     # Push the Docker image to Google Container Registry
     - name: Publish
