@@ -123,8 +123,8 @@ resource "helm_release" "nginx" {
   namespace        = "ingress"
   version          = "4.0.1"
   create_namespace = true
-  values = [file("manifests/nginx-values.yaml")]
-  
+  values           = [file("manifests/nginx-values.yaml")]
+
   depends_on = [
     google_container_node_pool.primary_preemptible_nodes
   ]

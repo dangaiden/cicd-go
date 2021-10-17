@@ -12,14 +12,14 @@
 
 name: Build and Deploy to GKE
 
-on:
-  push:
-    paths:
-      - 'app/**/*'
-      #- 'testing/**/*'
-      - 'Dockerfile'
-    branches:
-      - master
+# on:
+#   push:
+#     paths:
+#       - 'app/**/*'
+#       #- 'testing/**/*'
+#       - 'Dockerfile'
+#     branches:
+#       - master
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
