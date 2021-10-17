@@ -1,32 +1,24 @@
 # This workflow will build a docker container, publish it to Google Container Registry, and deploy it to GKE when there is a push to the master branch.
 #
-# To configure this workflow:
-#
-# 1. Ensure that your repository contains the necessary configuration for your Google Kubernetes Engine cluster, including deployment.yml, kustomization.yml, service.yml, etc.
-#
-# 2. Set up secrets in your workspace: GKE_PROJECT with the name of the project and GKE_SA_KEY with the Base64 encoded JSON service account key (https://github.com/GoogleCloudPlatform/github-actions/tree/docs/service-account-key/setup-gcloud#inputs).
-#
-# 3. Change the values for the GKE_ZONE, GKE_CLUSTER, IMAGE, and DEPLOYMENT_NAME environment variables (below).
-#
 # For more support on how to run the workflow, please visit https://github.com/google-github-actions/setup-gcloud/tree/master/example-workflows/gke
 
 name: Build and Deploy to GKE
 
-# on:
-#   push:
-#     paths:
-#       - 'app/**/*'
-#       #- 'testing/**/*'
-#       - 'Dockerfile'
-#     branches:
-#       - master
+on:
+  push:
+    paths:
+      - 'app/**/*'
+      #- 'testing/**/*'
+      - 'Dockerfile'
+    branches:
+      - master
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: cluster-1    # TODO: update to cluster name
-  GKE_ZONE: us-central1-c   # TODO: update to cluster zone
-  DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
-  IMAGE: static-site
+  GKE_CLUSTER: october-cicd-go-cl   
+  GKE_ZONE: us-west1-c   
+  DEPLOYMENT_NAME: go-deployment
+  IMAGE: goserver
 
 jobs:
   # CI
@@ -77,6 +69,7 @@ jobs:
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
           .
+      run: echo "GKE-CLUSTER-> $GKE_CLUSTER"
 
     # Push the Docker image to Google Container Registry
     - name: Publish
