@@ -98,7 +98,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 
 ############ H E L M #######################
 
-#data "google_client_config" "current" {}
+data "google_client_config" "current" {}
 
 #https://registry.terraform.io/providers/hashicorp/helm/latest/docs
 provider "helm" {
@@ -106,7 +106,7 @@ provider "helm" {
   kubernetes {
     host = google_container_cluster.primary.endpoint
     #?????????IS TOKEN NEEDED??????????????????????????
-    #token                  = data.google_client_config.current.access_token
+    token                  = data.google_client_config.current.access_token
     client_certificate     = base64decode(google_container_cluster.primary.master_auth.0.client_certificate)
     client_key             = base64decode(google_container_cluster.primary.master_auth.0.client_key)
     cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)

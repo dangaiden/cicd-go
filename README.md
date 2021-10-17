@@ -6,7 +6,8 @@
 - Terraform installed (v1.0.8 used)
 - A GCP account with a **project already created and Billing **linked**.
 - Install and configure [gcloud-sdk] (https://cloud.google.com/sdk/docs/quickstarts)
-- kubectl installed
+- **kubectl** installed
+- [Helm] v3 (https://helm.sh/docs/intro/quickstart/)
 
 > For HTTPS ACME , you will need a **public domain registered** and configure additional permissions, otherwise you won't be able to issue certificates to your endpoints.
 I haven't been able to set up (using DNS01 challenge) correctly due to having my domain in Route53 and the GKE cluster in GCP. You should [check] () the official documentation before going forward.
@@ -37,9 +38,23 @@ kubectl apply -f manifests/
 
 # Developer overview Diagram
 
+# GitHub Actions
+
 # Problems found
 
-In my case my public domain is
+## ACME with DNS01 challenge
+DNS01 Challenge with domain in Route53 and K8s cluster in GKE was unsucessful:
+``` bash
+wildcard is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::xxxxxx:policy/DNS-Route53-role
+           status code: 403, request id: e1bb82af-1811-4fd2-a38b-bsasdfasdf1
+```
 
-# GitHub Actions
+I've even tried to delegate a subdomain () from Route53 to Google Cloud DNS but no success:
+``` bash
+ Warning  PresentError  4m50s (x7 over 9m57s)  cert-manager  Error presenting challenge: When querying the SOA record for the domain '_acme-challenge.go.itgaiden.com.' using nameservers [10.8.0.10:53], rcode was expected to be 'NOERROR' or 'NXDOMAIN', but got 'SERVFAIL'
+```
+In the official [documentation] (https://cert-manager.io/docs/configuration/acme/dns01/route53/) seems to state that assume the cluster is in AWS, therefore, although there could be people that accomplished in the past, for some reason now doesn't seem possible
+
+
+
 
