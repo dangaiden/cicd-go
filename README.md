@@ -46,7 +46,6 @@ kubectl apply -f ../k8s/custom-manifests/
 
 ```
 
-
 It will configure an application with a service and ingress.
 
 Now, if you want, you can use a public domain and point it to the external IP from the LB.

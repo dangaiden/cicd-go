@@ -1,6 +1,6 @@
-#####################
+###############################
 ### Project configurations
-#####################
+###############################
 variable "project_name" {
   type        = string
   description = "Project ID for GCP"
@@ -16,9 +16,9 @@ variable "gcp_service_list" {
   type        = list(any)
 }
 
-#####################
+###############################
 ### GCP Region and zone
-#####################
+###############################
 
 variable "gcp_region" {
   type        = string
@@ -37,9 +37,9 @@ variable "vpc_subnet" {
   default     = "10.10.1.0/24"
 }
 
-#####################
-### GKE
-#####################
+##########################
+##### GKE
+##########################
 
 
 variable "master_authorized_networks_cidr_blocks" {
@@ -53,7 +53,7 @@ variable "master_authorized_networks_cidr_blocks" {
       # fighting with Terraform.
       cidr_block = "0.0.0.0/0"
       # Field for users to identify CIDR blocks.
-      display_name = "default"
+      display_name = "default access to everyone (not limited)"
     },
   ]
 
@@ -76,16 +76,6 @@ variable "nodes_type" {
 #####################
 ### 
 #####################
-
-#####################
-### 
-#####################
-
-
-#####################
-### 
-#####################
-
 
 #####################
 ### OTHERS

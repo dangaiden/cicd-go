@@ -1,11 +1,5 @@
-# Gcloud credentials
-# /home/dan/.config/gcloud/application_default_credentials.json
-
-# Read Google Cloud Compoute(GCP) billing account id which is needed
-data "google_billing_account" "account" {
-  display_name = "My Billing Account"
-  open         = true
-}
+## Default gcloud credentials
+# /home/<user>/.config/gcloud/application_default_credentials.json
 
 provider "google" {
   #credentials = file(var.credentials_file)
@@ -13,6 +7,16 @@ provider "google" {
   zone   = var.gcp_zone
 }
 
+
+## Enable the necessary services on the project for deployments
+
+resource "google_project_service" "gcp_services" {
+  count   = length(var.gcp_service_list)
+  project = var.project_id
+  service = var.gcp_service_list[count.index]
+  #disable_dependent_services = false
+  disable_on_destroy = false
+}
 
 /*I am avoiding creating projects because of how GCP handles it.
 The project doesn't get deleted but in an inactive status and
@@ -25,15 +29,13 @@ to exceed.
   billing_account = data.google_billing_account.account.id
 } */
 
-#Enable the necessary services on the project for deployments
 
-resource "google_project_service" "gcp_services" {
-  count   = length(var.gcp_service_list)
-  project = var.project_id
-  service = var.gcp_service_list[count.index]
-  #disable_dependent_services = false
-  disable_on_destroy = false
-}
+# Read Google Cloud Compoute(GCP) billing account id which is needed
+/* data "google_billing_account" "account" {
+  display_name = "My Billing Account"
+  open         = true
+} */
+
 
 ## Kubeconfig file
 

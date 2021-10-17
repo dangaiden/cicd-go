@@ -1,11 +1,6 @@
-/* resource "google_service_account" "default" {
-  account_id   = "gke-service-account-id"
-  display_name = "Service Account for GKE"
-  project      = var.project_name
-} */
-
-
+################################################
 ######### GKE CLUSTER DEFINITION ############
+################################################
 resource "google_container_cluster" "primary" {
   name     = "${var.project_name}-cl"
   location = var.gcp_zone
@@ -33,8 +28,10 @@ resource "google_container_cluster" "primary" {
 
   }
 
-
+  ######################################################  
   ########## NODE CONFIGURATION (MASTER) ############
+  ######################################################
+
   node_config {
     // using gke-default
     // https://cloud.google.com/sdk/gcloud/reference/container/node-pools/create#--scopes
@@ -73,8 +70,9 @@ resource "google_container_cluster" "primary" {
 
 }
 
+##########################################
 ######### NODEPOOL DEFINITION ############
-
+##########################################
 resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "${var.project_name}-node-pool"
   location   = var.gcp_zone
@@ -95,9 +93,9 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 }
 
 
-
-############ H E L M #######################
-
+################################################
+############ HELM definitions #######################
+################################################
 data "google_client_config" "current" {}
 
 #https://registry.terraform.io/providers/hashicorp/helm/latest/docs
@@ -113,17 +111,9 @@ provider "helm" {
   }
 }
 
-#https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release
-/* resource "helm_release" "traefik" {
-  name             = "traefik"
-  chart            = "traefik"
-  repository       = "https://helm.traefik.io/traefik"
-  namespace        = "traefik"
-  create_namespace = true
-  version          = "10.0.0"
-
-  values = [file("values.yaml")]
-} */
+############################## 
+### Helm release of Nginx
+##############################
 
 # https://github.com/kubernetes/ingress-nginx/tree/main/charts/ingress-nginx
 resource "helm_release" "nginx" {
@@ -133,23 +123,16 @@ resource "helm_release" "nginx" {
   namespace        = "ingress"
   version          = "4.0.1"
   create_namespace = true
-  values = [file("nginx-values.yaml")]
+  values = [file("manifests/nginx-values.yaml")]
   
-
-   ## We won't use it as we will perform the DNS change ourselves.
-  /*
-  set {
-    name = controller.service.loadBalancerIP
-    #value = google_compute_global_address.external_ip.address
-  }
-  */
-
   depends_on = [
     google_container_node_pool.primary_preemptible_nodes
   ]
 
 }
-
+####################################
+### Helm release of Cert-manager
+####################################
 resource "helm_release" "cert-manager" {
   name             = "cert-manager"
   chart            = "cert-manager"
