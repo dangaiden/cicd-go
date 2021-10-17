@@ -2,7 +2,7 @@
 
 - A GitHub account obviously.
 - Terraform installed (v1.0.8 used)
-- A GCP account with a **project already created and Billing **linked**. 
+- A GCP account with a **project already created and Billing linked**. 
 Your user should have full permissions although **a SA is recommended** instead of the root account for the projeect
 - Install and configure (gcloud-sdk) [https://cloud.google.com/sdk/docs/quickstarts]
 - **kubectl** installed
@@ -23,6 +23,7 @@ This will deploy the following componentes:
 
 - A functionally public GKE cluster.
 - 2 Helm releases with Nginx (4.0.3) and Cert-manager (1.4?) installed.
+- With the Nginx deployment it will imply that an External IP address and a L7 LB will be deployed.
 
 # Kubernetes deployment
 
@@ -42,7 +43,7 @@ kubectl apply -f manifests/
 ```
 
 ```bash
-kubectl apply -f manifests/
+
 ```
 
 
