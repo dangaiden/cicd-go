@@ -95,29 +95,46 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 
 data "google_client_config" "current" {}
 
-
+#https://registry.terraform.io/providers/hashicorp/helm/latest/docs
 provider "helm" {
 
   kubernetes {
     host = google_container_cluster.primary.endpoint
-
-    #token                  = data.google_client_config.current.access_token
+    #?????????IS TOKEN NEEDED??????????????????????????
+    token                  = data.google_client_config.current.access_token
     client_certificate     = base64decode(google_container_cluster.primary.master_auth.0.client_certificate)
     client_key             = base64decode(google_container_cluster.primary.master_auth.0.client_key)
     cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)
   }
 }
 
-
+#https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release
 resource "helm_release" "traefik" {
   name             = "traefik"
   chart            = "traefik"
   repository       = "https://helm.traefik.io/traefik"
   namespace        = "traefik"
   create_namespace = true
+  version          = "10.0.0"
 
   values = [file("values.yaml")]
 }
+
+
+
+resource "helm_release" "cert-manager" {
+  name = "cert-manager"
+  chart = "cert-manager"
+  repository = "https://charts.jetstack.io"
+  namespace = "cert-manager"
+  create_namespace = true
+
+  set {
+    name  = "installCRDs"
+    value = "true"
+  }
+}
+
 
 
 #############################################################

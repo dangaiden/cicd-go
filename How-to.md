@@ -260,3 +260,10 @@ Follow details for: https://cert-manager.io/docs/configuration/acme/dns01/route5
 gcloud iam service-accounts create images-sa --display-name="SA for managing Docker images"
 
 gcloud iam service-accounts create k8s-dns-sa --display-name="DNS Service Account"
+
+# EXPORT current kubeconfig for being able to destroy after using HELM.
+
+gcloud container clusters get-credentials <cluster-name>
+gcloud container clusters get-credentials october-cicd-go-cl
+export KUBE_CONFIG_PATH=~/.kube/config
+terraform destroy

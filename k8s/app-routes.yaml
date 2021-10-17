@@ -10,7 +10,7 @@ spec:
     - web
     - websecure
   routes:
-    - match: Host(`itgaiden.com`)
+    - match: Host(`go.itgaiden.com`) || Host(`itgaiden.com`)
       kind: Rule
       services:
         - name: go-service

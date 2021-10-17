@@ -16,3 +16,14 @@ resource "google_compute_subnetwork" "subnet" {
   project       = var.project_name
   ip_cidr_range = var.vpc_subnet
 }
+
+/* module "address" {
+  source       = "terraform-google-modules/address/google"
+  version      = "3.0.0"
+  project_id   = var.project_id
+  region       = var.gcp_region
+  address_type = "EXTERNAL"
+  names = [
+    "regional-external-ip-address-1",
+  ]
+} */

@@ -10,15 +10,17 @@ provider "kubectl" {
   #host  = "https://${data.google_container_cluster.my_cluster.endpoint}"
   #token = data.google_client_config.default.access_token
   #cluster_ca_certificate = base64decode(data.google_container_cluster.my_cluster.master_auth[0].cluster_ca_certificate)
-  #config_path    = "~/.kube/config"
+  config_path    = "~/.kube/config"
 
   client_certificate     = base64decode(google_container_cluster.primary.master_auth.0.client_certificate)
   client_key             = base64decode(google_container_cluster.primary.master_auth.0.client_key)
   cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)
+
 }
 
-## Traefik ingress route
+## Apply YAMLs above manifests folder.
 
+/*
 data "kubectl_path_documents" "docs" {
   pattern = "./manifests/*.yaml"
 }
@@ -27,12 +29,13 @@ resource "kubectl_manifest" "deployment" {
   for_each  = data.kubectl_path_documents.docs.manifests
   yaml_body = each.value
 }
+*/
 
 
-/*
+
 ## Traefik-ingressroutes
 resource "kubectl_manifest" "traefik-routes" {
-    yaml body = <<YAML
+  yaml_body = <<YAML
 # dashboard.yaml
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
@@ -50,11 +53,30 @@ spec:
         - name: api@internal
           kind: TraefikService
 YAML
+
+  depends_on = [
+    helm_release.traefik
+  ]
+}
+
+## Namespace for app
+resource "kubectl_manifest" "go-app-namespace" {
+  yaml_body = <<YAML
+# namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app
+YAML
+
+  depends_on = [
+    helm_release.traefik
+  ]
 }
 
 ## Go-app Deployment and service
 resource "kubectl_manifest" "go-app-deployment" {
-    yaml_body = <<YAML
+  yaml_body = <<YAML
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -91,12 +113,16 @@ spec:
     targetPort: 8080
   type: ClusterIP
 YAML
+
+  depends_on = [
+    helm_release.traefik
+  ]
 }
 
 
 ## Ingress routes for Go-app
 resource "kubectl_manifest" "go-app-routes" {
-    yaml_body = <<YAML
+  yaml_body = <<YAML
 #app-routes.yaml
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
@@ -116,5 +142,8 @@ spec:
           namespace: app
           port: 80
 YAML
+
+  depends_on = [
+    helm_release.traefik
+  ]
 }
-*/

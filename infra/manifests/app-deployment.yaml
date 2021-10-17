@@ -1,3 +1,9 @@
+# namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app
+---
 #app-deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -42,7 +48,6 @@ kind: IngressRoute
 metadata:
   name: go-ingress
   namespace: app
-
 spec:
   entryPoints:
     - web
@@ -54,3 +59,10 @@ spec:
         - name: go-service
           namespace: app
           port: 80
+  routes:
+    - match: (PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: go-service
+          namespace: app
+          port: 80          
