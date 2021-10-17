@@ -1,19 +1,20 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: go-app
+  name: go-ingress
   namespace: app
   annotations:
-    cert-manager.io/cluster-issuer: holded.itgaiden.com-ca
-    cert-manager.io/cluster-issuer: letsencrypt-http01-staging
-    cert-manager.io/duration: 2160h # 90d
-    cert-manager.io/renew-before: 360h # 15d
+    kubernetes.io/ingress.class: "external-nginx"
+    #cert-manager.io/cluster-issuer: holded.itgaiden.com-ca
+    cert-manager.io/cluster-issuer: letsencrypt-http01-prod
+    #cert-manager.io/duration: 2160h # 90d
+    #cert-manager.io/renew-before: 360h # 15d
 spec:
-  ingressClassName: external-nginx
-##  tls:
-##  - hosts:
-##    - holded.itgaiden.com
-##    secretName: holded.itgaiden.com-key-pair
+##  ingressClassName: external-nginx
+  tls:
+  - hosts:
+    - holded.itgaiden.com
+    secretName: holded.itgaiden.com-key-pair
   rules:
   - host: holded.itgaiden.com
     http:

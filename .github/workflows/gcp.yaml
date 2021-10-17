@@ -14,6 +14,10 @@ name: Build and Deploy to GKE
 
 on:
   push:
+    paths:
+      - 'app/**/*'
+      #- 'testing/**/*'
+      - 'Dockerfile'
     branches:
       - master
 
@@ -25,6 +29,7 @@ env:
   IMAGE: static-site
 
 jobs:
+  # CI
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
@@ -39,6 +44,18 @@ jobs:
       with:
         service_account_key: ${{ secrets.GKE_SA_KEY }}
         project_id: ${{ secrets.GKE_PROJECT }}
+    
+    #- name: Get vars values
+    #    id: vars
+    #    run: |
+    #      echo "ecr_repo=$(grep -A1 ecr_repo ./iac/variables.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
+    #      echo "image_tag=$(grep -A1 image_tag ./iac/variables.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
+    #      echo "service=$(grep -A1 aws_ecs_service ./iac/ecs.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
+    #      echo "cluster=$(grep -A1 'resource "aws_ecs_cluster"' ./iac/ecs.tf | tail -n 1  | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
+    #      echo "region=$(grep -A1 aws_region ./iac/variables.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
+    #      echo "domain=$(grep -A1 domain_name ./iac/variables.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
+
+
 
     # Configure Docker to use the gcloud command-line tool as a credential
     # helper for authentication

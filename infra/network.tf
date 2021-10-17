@@ -17,13 +17,16 @@ resource "google_compute_subnetwork" "subnet" {
   ip_cidr_range = var.vpc_subnet
 }
 
-/* module "address" {
-  source       = "terraform-google-modules/address/google"
-  version      = "3.0.0"
-  project_id   = var.project_id
-  region       = var.gcp_region
-  address_type = "EXTERNAL"
-  names = [
-    "regional-external-ip-address-1",
-  ]
+
+# This could be used to reserve an static IP and then changing it
+# in your DNS provider.
+
+/* resource "google_compute_global_address" "external_ip" {
+  provider      = google-beta
+  name          = "global-psconnect-ip"
+  address_type  = "EXTERNAL"
+  network       = google_compute_network.network.id
+  project = var.project_id
+  #address       
+  #Ommitting address in purpose to let GCP choose an available one.
 } */

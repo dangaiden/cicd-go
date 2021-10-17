@@ -10,9 +10,9 @@ controller:
   replicaCount: 1
   admissionWebhooks:
     enabled: true
-  service:
-    annotations: 
-      kubernetes.io/ingress.class: gce
+  #service:
+  #  annotations: 
+  #    kubernetes.io/ingress.class: gce
   # Required for ACME
   watchIngressWithoutClass: true
   extraArgs:

@@ -11,7 +11,7 @@ spec:
   commonName: holded.itgaiden.com
   dnsNames:
   - holded.itgaiden.com
-  secretName:  go-app-cert-key-pair
+  secretName: go-app-cert-key-pair
   privateKey:
     algorithm: RSA
     encoding: PKCS1

@@ -125,14 +125,24 @@ provider "helm" {
   values = [file("values.yaml")]
 } */
 
+# https://github.com/kubernetes/ingress-nginx/tree/main/charts/ingress-nginx
 resource "helm_release" "nginx" {
   name             = "nginx"
   chart            = "ingress-nginx"
   repository       = "https://kubernetes.github.io/ingress-nginx"
   namespace        = "ingress"
+  version          = "4.0.1"
   create_namespace = true
-
   values = [file("nginx-values.yaml")]
+  
+
+   ## We won't use it as we will perform the DNS change ourselves.
+  /*
+  set {
+    name = controller.service.loadBalancerIP
+    #value = google_compute_global_address.external_ip.address
+  }
+  */
 
   depends_on = [
     google_container_node_pool.primary_preemptible_nodes
@@ -145,6 +155,7 @@ resource "helm_release" "cert-manager" {
   chart            = "cert-manager"
   repository       = "https://charts.jetstack.io"
   namespace        = "cert-manager"
+  version          = "1.5.3"
   create_namespace = true
 
   set {

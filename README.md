@@ -3,7 +3,7 @@
 - A GitHub account obviously.
 - Terraform installed (v1.0.8 used)
 - A GCP account with a **project already created and Billing linked**. 
-Your user should have full permissions although **a SA is recommended** instead of the root account for the projeect
+Your user should have full permissions although **a SA is recommended** when using Terraform as well. I will only use it for the GH action.
 - Install and configure (gcloud-sdk) [https://cloud.google.com/sdk/docs/quickstarts]
 - **kubectl** installed
 - (Helm) v3 [https://helm.sh/docs/intro/quickstart/]
@@ -36,10 +36,10 @@ gcloud container clusters get-credentials <gke-cluster-name>
 export KUBE_CONFIG_PATH=~/.kube/config
 ```
 
-Now, to deploy our custom application perform:
+Now, to deploy our custom application with some ingress rules execute:
 
 ```bash
-kubectl apply -f manifests/
+kubectl apply -f ../k8s/custom-manifests/
 ```
 
 ```bash
@@ -47,8 +47,12 @@ kubectl apply -f manifests/
 ```
 
 
-It will configure an application with a service and ingress. That ingress will cre
+It will configure an application with a service and ingress.
 
+Now, if you want, you can use a public domain and point it to the external IP from the LB.
+In my case I added a A Record (holded.itgaiden.com) in my hosted zone pointing to the external IP (x.x.x.x)
+
+After a minute or so, if everything is correct, your app will be secured with a certificate from Let's Encrypt!
 
 
 # Infrastructure Diagram
@@ -73,16 +77,23 @@ I've even tried to delegate a subdomain (go.itgaiden.com) from Route53 to Google
 ```
 In the official [documentation) [https://cert-manager.io/docs/configuration/acme/dns01/route53/] seems to state that assume the cluster is in AWS, therefore, although there could be people that accomplished in the past, for some reason now doesn't seem possible although I have spent a lot of time on this.
 
-### Using Traefik v2.x.x and "PathPrefix"
+TLDR: It didn't worked with DNS01 challenge but with HTTP01 challenge had no problem.
 
-Although it works correctly out of the box, for some reason, when you using only "PathPrefix" like for example:
+### Using Traefik v2.x.x and "PathPrefix" rule not working correctly.
+
+Although it works correctly out of the box, for some reason, when using only "PathPrefix", it didn't redirect correctly:
 ```
 routes:
     - match: (PathPrefix(`/something`) || PathPrefix(`/somethingelse`))
     kind: Rule
 ```
+For me, only worked on rules with "Host" match like: `Host(`itgaiden.com`)`
 
-I spent some time with this and I finally decided to move to the Nginx Ingress.
+I spent some time with this and I finally decided to move to the **Nginx which worked flawlessly**.
 
 
+# Sources
 
+https://cloud.google.com/community/tutorials/nginx-ingress-gke
+https://learnk8s.io/terraform-gke
+https://cert-manager.io/docs/
