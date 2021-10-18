@@ -64,10 +64,11 @@ request to the corresponding Function.
 func handleRequests() {
 	PrimaryRouter := mux.NewRouter().StrictSlash(true)
 	//PrimaryRouter.HandleFunc("/", entry)
-	PrimaryRouter.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
+
 	PrimaryRouter.HandleFunc("/all", returnPokemons)
 	PrimaryRouter.HandleFunc("/pokemon/{Number}", returnPokemon)
 	PrimaryRouter.HandleFunc("/pokemon", newPokemon).Methods("POST")
+	PrimaryRouter.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 
 	log.Fatal(http.ListenAndServe(":8080", PrimaryRouter))
 
