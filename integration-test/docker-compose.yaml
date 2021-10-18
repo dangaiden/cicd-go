@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+  api:
+    image: gcr.io/${{ secrets.GKE_PROJECT }}:${image_tag}
+    ports:
+      - "80:8080"
