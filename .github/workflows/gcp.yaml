@@ -40,7 +40,7 @@ jobs:
       run: |
         go version
         go get -u github.com/gorilla/mux
-        go mod init api && go mod tidy.
+        go mod init api && go mod tidy
     - name: Test
       run: go test -v ./...
 
