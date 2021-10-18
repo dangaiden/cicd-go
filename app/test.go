@@ -37,7 +37,7 @@ func handleRequests() {
 	//	goimage := http.FileServer(http.Dir("./static"))
 	//	PrimaryRouter.HandleFunc("/go", goimage)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", PrimaryRouter))
 }
 
 func newPokemon(w http.ResponseWriter, r *http.Request) {
@@ -68,6 +68,7 @@ func returnPokemons(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(Pokemons)
 }
 
+// Return a webpage with a printed string
 func hitext(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "*Hi!")
 }
@@ -80,9 +81,6 @@ func main() {
 		Pokemon{Name: "Charmander", Number: "004", Type: "Fire"},
 	}
 
-	//fileServer := http.FileServer(http.Dir("./static"))
-	//http.Handle("/go", fileServer)
-
 	log.Println("Started, serving on port 8080")
 	err := http.ListenAndServe(":8080", nil)
 
@@ -93,4 +91,6 @@ func main() {
 	handleRequests()
 }
 
+//fileServer := http.FileServer(http.Dir("./static"))
+//http.Handle("/go", fileServer)
 /* https://en.wikipedia.org/w/api.php?action=parse&format=json&page=Bulbasaur */
