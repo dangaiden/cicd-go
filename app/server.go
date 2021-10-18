@@ -22,6 +22,11 @@ func entry(w http.ResponseWriter, r *http.Request) {
 func handleRequests() {
 	PrimaryRouter := mux.NewRouter().StrictSlash(true)
 	PrimaryRouter.HandleFunc("/", entry)
+	PrimaryRouter.PathPrefix("hi").
+		Handler(http.FileServer(http.Dir("./static")))
+
+	log.Fatal(http.ListenAndServe(":8080", PrimaryRouter))
+
 }
 
 func main() {
@@ -35,11 +40,5 @@ func main() {
 
 	//http.Handle("/", http.FileServer(http.Dir("./static")))
 
-	log.Println("Started, serving on port 8080")
-	err := http.ListenAndServe(":8080", nil)
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
 	handleRequests()
 }
