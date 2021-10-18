@@ -44,12 +44,12 @@ Function that removes the received item from the Pokemons' slice.
 */
 func delPokemon(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	Number := vars["Number"]
+	number := vars["number"]
 
 	// Loop through all values in the slice
 	for i, pokemon := range Pokemons {
 		//If gathered data matches the one we have, remove it.
-		if pokemon.Number == Number {
+		if pokemon.Number == number {
 			Pokemons = append(Pokemons[:i], Pokemons[i+1:]...)
 		}
 	}
