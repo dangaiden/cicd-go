@@ -2,15 +2,16 @@ name: Simple CI/CD pipeline with Docker and GKE
 
 on:
   push:
-    paths:
-      - 'app/**/*'
+    #paths:
+      #- 'app/**/*'
       #- 'test/**/*'
-      - 'Dockerfile'
-      - '.github/**'
+      #- 'Dockerfile'
+      #- '.github/**'
     paths-ignore:
       - 'infra/**'
       - 'img/**'
       - 'k8s/**'
+      - 'base/**'
     branches:
       - master
 
