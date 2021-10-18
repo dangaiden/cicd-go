@@ -1,6 +1,5 @@
-FROM golang:alpine3.14
-#RUN apt-get update
-RUN apk update
+FROM golang:1.16
+RUN apt-get update
 WORKDIR /go/src/app
 COPY app .
 EXPOSE 8080

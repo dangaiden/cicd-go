@@ -80,8 +80,8 @@ func main() {
 		Pokemon{Name: "Charmander", Number: "004", Type: "Fire"},
 	}
 
-	fileServer := http.FileServer(http.Dir("./static")) // New code
-	http.Handle("/go", fileServer)                      // New code
+	//fileServer := http.FileServer(http.Dir("./static"))
+	//http.Handle("/go", fileServer)
 
 	log.Println("Started, serving on port 8080")
 	err := http.ListenAndServe(":8080", nil)
