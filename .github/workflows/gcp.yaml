@@ -30,9 +30,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Test query-json
-      run: curl -s https://holded.itgaiden.com/pokemon/149 | jquery-json '.'
-      shell: bash
     - name: Install Go
       uses: actions/setup-go@v2
       with:
@@ -83,9 +80,9 @@ jobs:
     - name: Running Docker compose.
       run: docker-compose -f "integration-test/docker-compose.yaml" up -d
 
-    #- name: Run custom script to test Docker image.
-    #   run: bash integration-test/test.sh
-    # shell: bash
+    - name: Run custom script to test Docker image.
+       run: bash integration-test/test.sh
+     shell: bash
 
     # Push the Docker image to Google Container Registry once has been tested
 

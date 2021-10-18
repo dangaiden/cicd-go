@@ -1,6 +1,5 @@
 FROM golang:1.16
-RUN apt-get update && curl -sfL \
-https://raw.githubusercontent.com/davesnx/query-json/master/scripts/install.sh | bash
+RUN apt-get update && apt-get -y --force-yes jq
 WORKDIR /go/src/app
 COPY app .
 EXPOSE 8080
