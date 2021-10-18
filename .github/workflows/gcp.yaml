@@ -79,10 +79,19 @@ jobs:
     - name: Set variables for testing
       run: echo "FULL_TAG=$(gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA)" >> $GITHUB_ENV
     - name: Test set output
-      run: echo $FULL_TAG
+      run: |-
+      echo $FULL_TAG
+      echo $PROJECT_ID
+      echo $IMAGE
+      echo $GITHUB_SHA
 
     # IMAGE TESTING BEFORE PUBLISHING
+    #- name: Running Docker compose.
+    #  run: docker-compose -f "integration-test/docker-compose.yaml" up -d
 
+    #- name: Run custom script to test Docker image.
+    #   run: bash integration-test/test.sh
+    # shell: bash
 
     # Push the Docker image to Google Container Registry once has been tested
 
