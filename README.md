@@ -3,32 +3,47 @@
 - A GitHub account obviously.
 - Terraform installed (v1.0.8 used)
 - A GCP account with a **project already created and Billing linked**. 
-Your user should have full permissions although **a SA is recommended** when using Terraform as well. I will only use it for the GH action.
-
+Your user should have full permissions although **a SA is recommended** when using Terraform as well. I **will use it ony for CI/CD pipeline **i n GH action.
 - Install and configure [gcloud-sdk](https://cloud.google.com/sdk/docs/quickstarts)
 - **kubectl** installed
-- [Helm v3](https://helm.sh/docs/intro/quickstart/)
-- If you want to use ACME, you will need a **public domain registered** and perform additional configurations (depending on how you want to do it).
 - For the CI/CD pipeline in GH actions I have created a SA as specified [here](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with the appropiate permissions. 
+- If you want to use ACME, you will need a **public domain registered** and perform additional configurations (depending on how you wantH to do it).
 
-*Here I'll be using the HTTP01 challenge*
+*Here I'll be using the HTTP01 challenge as the DNS01 has issues when domain and K8s cluster are not in the same cloud provider*
 
+helm repo add jetstack https://charts.jetstack.io
+helm repo add ingress-nginx   https://kubernetes.github.io/ingress-nginx
+# Installation (GCP infrastructure bootstrap)
 
-# Installation (GKE bootstrap)
+### Login to GCP with gcloud
 
-To deploy all the infrastructure withink GCP, we will use terraform which help us to deploy the needed resource to setup a
-GKE cluster.
+Remember that you need the gcloud-sdk installed in your machine, once it's installed, you can log into your account using:
+```bash
+ gcloud auth application-default login
 
-- Clone the repo, go to the "infra" folder.
-- Iniatalize providers: `terraform init`
+```
+
+A window from your web browser will pop-up, select your account and now you're logged. Your credentials will be saved in your home directory in JSON format.
+
+Now, configure your gcloud with `gcloud init`.
+
+Once you're logged and configured, you can continue.
+
+### Deploy with Terraform
+
+To deploy all the infrastructure withink GCP, we will use terraform which help us to deploy the needed resource to setup a GKE cluster.
+
+- Clone the repository: `git clone https://github.com/dangaiden/cicd-go.git`
+- Change to the "infra" directory and Iniatalize providers: 
+`cd cicd-go/infra` and `terraform init`
 - And then perform: `terraform plan && terraform apply -auto-approve`
 > This can take about 10 minutes to be deployed.
 
 This will deploy the following componentes:
 
 - A functionally public GKE cluster.
-- 2 Helm releases with Nginx (4.0.3) and Cert-manager (1.4?) installed.
-- With the Nginx deployment it will imply that an External IP address and a L7 LB will be deployed.
+- 2 Helm releases with Nginx (1.0.0) and Cert-manager (1.5.3) installed.
+- With the NGINX (ingress controller) release, will imply that an External IP address object and a L7 LB will be deployed in GCP.
 
 # Kubernetes deployment
 
@@ -47,16 +62,11 @@ Now, to deploy our custom application with some ingress rules execute:
 kubectl apply -f ../k8s/custom-manifests/
 ```
 
-```bash
-
-```
-
 It will configure an application with a service and ingress.
 
-In this repository, you must use a public domain and point it to the external IP from the LB (You can gather it `kubectl get svc -n ingress | grep -a1 EXTERNAL-IP`) as the ingress routes
-is waiting for a host.
+In this repository, you must use a public domain and point it to the external IP from the LB (You can gather it with: `kubectl get svc -n ingress | grep -a1 EXTERNAL-IP`) as the ingress routes is waiting for a host.
 
-In my case I added a A Record (holded.itgaiden.com) in my hosted zone pointing to the external IP (x.x.x.x)
+In my case I added an A Record (<subdomain>.itgaiden.com) in my hosted zone pointing to the external IP (x.x.x.x)
 
 After a minute or so, if everything is correct, your app will be secured with a certificate from Let's Encrypt!
 
@@ -99,8 +109,10 @@ For me, only worked on rules with "Host" match like: `Host(`itgaiden.com`)`
 I spent some time with this and I finally decided to move to the **Nginx which worked flawlessly**.
 
 
-# Sources
+# Sources used
 
 - https://cloud.google.com/community/tutorials/nginx-ingress-gke
 - https://learnk8s.io/terraform-gke
 - https://cert-manager.io/docs/
+- https://github.com/dflemstr/rq
+- https://tutorialedge.net/golang/creating-restful-api-with-golang/

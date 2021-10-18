@@ -11,8 +11,6 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  #network            = google_compute_network.vpc_network.name
-  #subnetwork         = var.vpc_subnet
   min_master_version = var.min_master_version
 
 
@@ -33,7 +31,6 @@ resource "google_container_cluster" "primary" {
   ######################################################
 
   node_config {
-    // using gke-default
     // https://cloud.google.com/sdk/gcloud/reference/container/node-pools/create#--scopes
     oauth_scopes = [
       "https://www.googleapis.com/auth/devstorage.read_only",
@@ -58,7 +55,7 @@ resource "google_container_cluster" "primary" {
     enabled = false
   }
 
-  # Timeouts for operations within the node
+  # Timeouts for operations within the node.
   timeouts {
     create = "20m"
     update = "20m"
@@ -103,8 +100,8 @@ provider "helm" {
 
   kubernetes {
     host = google_container_cluster.primary.endpoint
-    #?????????IS TOKEN NEEDED??????????????????????????
     token                  = data.google_client_config.current.access_token
+    
     client_certificate     = base64decode(google_container_cluster.primary.master_auth.0.client_certificate)
     client_key             = base64decode(google_container_cluster.primary.master_auth.0.client_key)
     cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)

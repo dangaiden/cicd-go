@@ -1,6 +1,6 @@
-output "gke_endpoint" {
+/* output "gke_endpoint" {
   value = google_container_cluster.primary.endpoint
-}
+} */
 
 output "kubectl_update" {
   value = <<EOT

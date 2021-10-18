@@ -1,5 +1,5 @@
 ## Default gcloud credentials
-# /home/<user>/.config/gcloud/application_default_credentials.json
+# ~/.config/gcloud/application_default_credentials.json
 
 provider "google" {
   #credentials = file(var.credentials_file)
@@ -27,19 +27,4 @@ to exceed.
   name            = var.project_name
   project_id      = var.project_name
   billing_account = data.google_billing_account.account.id
-} */
-
-
-# Read Google Cloud Compoute(GCP) billing account id which is needed
-/* data "google_billing_account" "account" {
-  display_name = "My Billing Account"
-  open         = true
-} */
-
-
-## Kubeconfig file
-
-/* resource "local_file" "kubeconfig" {
-  content  = module.gke_auth.kubeconfig_raw
-  filename = "kubeconfig-${var.env_name}"
 } */

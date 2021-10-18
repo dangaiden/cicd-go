@@ -50,12 +50,13 @@ func newPokemon(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(pokemon)
 }
 
+// Function to return an specific object.
 func returnPokemon(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	key := vars["number"]
+	key := vars["Number"]
 
-	for _, article := range Pokemons {
-		if article.Number == key {
+	for _, pokemon := range Pokemons {
+		if pokemon.Number == key {
 			json.NewEncoder(w).Encode(Pokemon)
 		}
 	}
