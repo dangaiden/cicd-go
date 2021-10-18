@@ -34,7 +34,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
     - name: Install Go
       uses: actions/setup-go@v2
       with:
@@ -62,7 +61,7 @@ jobs:
         service_account_key: ${{ secrets.GKE_SA_KEY }}
         project_id: ${{ secrets.GKE_PROJECT }}
     
-    #- name: Get vars values
+    #- name: Get variables
     #    id: vars
 
     # Configure Docker to use the gcloud command-line tool as a credential
