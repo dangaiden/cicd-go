@@ -4,9 +4,13 @@ on:
   push:
     paths:
       - 'app/**/*'
-      #- 'testing/**/*'
+      #- 'test/**/*'
       - 'Dockerfile'
-      - '.github/**/*'
+      - '.github/**'
+    paths-ignore:
+      - 'infra/**'
+      - 'img/**'
+      - 'k8s/**'
     branches:
       - master
 
@@ -40,7 +44,7 @@ jobs:
 
 #CI-2
   ci-setup-build-publish:
-    name: Setup, Build, Publish
+    name: CI2-Setup, Build, Publish
     runs-on: ubuntu-latest
 
     steps:
@@ -55,27 +59,13 @@ jobs:
     
     #- name: Get vars values
     #    id: vars
-    #    run: |
-    #      echo "ecr_repo=$(grep -A1 ecr_repo ./iac/variables.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
-    #      echo "image_tag=$(grep -A1 image_tag ./iac/variables.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
-    #      echo "service=$(grep -A1 aws_ecs_service ./iac/ecs.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
-    #      echo "cluster=$(grep -A1 'resource "aws_ecs_cluster"' ./iac/ecs.tf | tail -n 1  | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
-    #      echo "region=$(grep -A1 aws_region ./iac/variables.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
-    #      echo "domain=$(grep -A1 domain_name ./iac/variables.tf | tail -n 1 | awk -F '\"' '{print $2}')" >> $GITHUB_ENV
-
-
 
     # Configure Docker to use the gcloud command-line tool as a credential
     # helper for authentication
     - run: |-
         gcloud --quiet auth configure-docker
 
-    # Get the GKE credentials so we can deploy to the cluster
-    - uses: google-github-actions/get-gke-credentials@v0.2.1
-      with:
-        cluster_name: ${{ env.GKE_CLUSTER }}
-        location: ${{ env.GKE_ZONE }}
-        credentials: ${{ secrets.GKE_SA_KEY }}
+    
 
     # Build the Docker image
     - name: Build
@@ -86,14 +76,8 @@ jobs:
           --build-arg GITHUB_REF="$GITHUB_REF" \
           .
   
-    # - name: Run docker compose container for testing
-    #   run: docker-compose -f "testing/docker-compose.yml" up -d
+    # IMAGE TESTING BEFORE PUBLISHING
 
-    # - name: Run testing
-    #   run: bash testing/test.sh
-
-    # - name: Stop docker compose
-    #   run: docker-compose -f "testing/docker-compose.yml" down
 
     # Push the Docker image to Google Container Registry once has been tested
 
@@ -101,7 +85,7 @@ jobs:
       run: |-
         docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
 
-
+#############################################################################
 #CD
   cd-Deploy:
     name: Deploy
@@ -116,6 +100,13 @@ jobs:
       with:
         service_account_key: ${{ secrets.GKE_SA_KEY }}
         project_id: ${{ secrets.GKE_PROJECT }}
+
+    # Get the GKE credentials so we can deploy to the cluster
+    - uses: google-github-actions/get-gke-credentials@v0.2.1
+      with:
+        cluster_name: ${{ env.GKE_CLUSTER }}
+        location: ${{ env.GKE_ZONE }}
+        credentials: ${{ secrets.GKE_SA_KEY }}
 
     # Install and configure Kustomize
     - name: Set up Kustomize
