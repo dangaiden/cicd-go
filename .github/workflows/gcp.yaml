@@ -46,6 +46,7 @@ jobs:
 #CI-2
   ci-setup-build-publish:
     name: CI2-Setup, Build, Publish
+    #needs: unit-test
     runs-on: ubuntu-latest
 
     steps:
@@ -89,7 +90,8 @@ jobs:
 #############################################################################
 #CD
   cd-Deploy:
-    name: Deploy
+    name: CDDeploy
+    needs: ci-setup-build-publish
     runs-on: ubuntu-latest
 
     steps:
@@ -117,9 +119,19 @@ jobs:
 
     # Deploy the Docker image to the GKE cluster using Kustomize which will replace the image name
     # and then apply it with kubectl. The kubectl rollout verifies if the deployment was successful.
-    - name: Deploy
+    - name: Deployment rollout
       run: |-
         ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
         ./kustomize build . | kubectl apply -f - 
         kubectl rollout status deployment/$DEPLOYMENT_NAME -n app
-        kubectl get pods -n app
+    
+    - name: Review pod status
+      run: |-
+        sleep 10
+        if $(kubectl get pods -n app | grep Running >/dev/null);
+        then
+          echo "New pod is in Running status"
+        else
+          echo "Pod is not Running correctly"
+          exit 1
+      shell: bash
