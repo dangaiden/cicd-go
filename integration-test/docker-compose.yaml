@@ -2,6 +2,6 @@ version: "3.8"
 
 services:
   api:
-    image: ${FULL_TAG}
+    image: gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
     ports:
       - "80:8080"
