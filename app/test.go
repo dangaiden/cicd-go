@@ -57,7 +57,7 @@ func returnPokemon(w http.ResponseWriter, r *http.Request) {
 
 	for _, pokemon := range Pokemons {
 		if pokemon.Number == key {
-			json.NewEncoder(w).Encode(Pokemon)
+			json.NewEncoder(w).Encode(pokemon)
 		}
 	}
 }
