@@ -20,11 +20,6 @@ type Pokemon struct {
 // Slice to store information (like a DB)
 var Pokemons []Pokemon
 
-func entry(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome page!")
-	fmt.Println("Endpoint Hit: WelcomePage")
-}
-
 /*
 Function that parses the data received and appends
 it to the Pokemons slice that we have created
@@ -64,6 +59,7 @@ func returnPokemons(w http.ResponseWriter, r *http.Request) {
 
 // Function to return an specific object (pokemon).
 func returnPokemon(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint Hit: returnPokemon")
 	vars := mux.Vars(r)
 	key := vars["Number"]
 
