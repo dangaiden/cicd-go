@@ -81,8 +81,8 @@ jobs:
       run: docker-compose -f "integration-test/docker-compose.yaml" up -d
 
     - name: Run custom script to test Docker image.
-       run: bash integration-test/test.sh
-     shell: bash
+      run: integration-test/test.sh
+      shell: bash
 
     # Push the Docker image to Google Container Registry once has been tested
 
