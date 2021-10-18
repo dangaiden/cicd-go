@@ -80,10 +80,10 @@ jobs:
       run: echo "FULL_TAG=$(gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA)" >> $GITHUB_ENV
     - name: Test set output
       run: |-
-      echo $FULL_TAG
-      echo $PROJECT_ID
-      echo $IMAGE
-      echo $GITHUB_SHA
+        echo $FULL_TAG
+        echo $PROJECT_ID
+        echo $IMAGE
+        echo $GITHUB_SHA
 
     # IMAGE TESTING BEFORE PUBLISHING
     #- name: Running Docker compose.
