@@ -66,9 +66,9 @@ It will configure an application with a service and ingress.
 
 In this repository, you must use a public domain and point it to the external IP from the LB (You can gather it with: `kubectl get svc -n ingress | grep -a1 EXTERNAL-IP`) as the ingress routes is waiting for a host.
 
-In my case I added an A Record (<subdomain>.itgaiden.com) in my hosted zone pointing to the external IP (x.x.x.x)
+In my case I created an A Record ("subdomain".itgaiden.com) in my hosted zone, pointing to the external IP from the Ingress controller.
 
-After a minute or so, if everything is correct, your app will be secured with a certificate from Let's Encrypt!
+After a minute or so, if everything is correct, your app will be secured with a certificate from Let's Encrypt! that will be trusted publicly.
 
 # Infrastructure Diagram
 

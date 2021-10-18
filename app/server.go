@@ -10,14 +10,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Declare structure of a Pokemon (Map/Array)
+// Declare structure of a Pokemon (Slice)
 type Pokemon struct {
 	Name   string `json:"Name"`
 	Number string `json:"Number"`
 	Type   string `json:"Type"`
 }
 
-// Array variable to store information (like a DB)
+// Slice to store information (like a DB)
 var Pokemons []Pokemon
 
 func entry(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +27,7 @@ func entry(w http.ResponseWriter, r *http.Request) {
 
 /*
 Function that parses the data received and appends
-it to the Pokemons array that we have created
+it to the Pokemons slice that we have created
 */
 func newPokemon(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
@@ -37,6 +37,23 @@ func newPokemon(w http.ResponseWriter, r *http.Request) {
 
 	Pokemons = append(Pokemons, pokemon)
 	json.NewEncoder(w).Encode(pokemon)
+}
+
+/*
+Function that removes the received item from the Pokemons' slice.
+*/
+func delPokemon(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	Number := vars["Number"]
+
+	// Loop through all values in the slice
+	for i, pokemon := range Pokemons {
+		//If gathered data matches the one we have, remove it.
+		if pokemon.Number == Number {
+			Pokemons = append(Pokemons[:i], Pokemons[i+1:]...)
+		}
+	}
+
 }
 
 // Return all objects (pokemons)
@@ -66,8 +83,9 @@ func handleRequests() {
 	//PrimaryRouter.HandleFunc("/", entry)
 
 	PrimaryRouter.HandleFunc("/all", returnPokemons)
-	PrimaryRouter.HandleFunc("/pokemon/{Number}", returnPokemon)
 	PrimaryRouter.HandleFunc("/pokemon", newPokemon).Methods("POST")
+	PrimaryRouter.HandleFunc("/pokemon/{Number}", returnPokemon)
+	PrimaryRouter.HandleFunc("/pokemon/{Number}", delPokemon).Methods("DELETE")
 	PrimaryRouter.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 
 	log.Fatal(http.ListenAndServe(":8080", PrimaryRouter))
@@ -76,7 +94,7 @@ func handleRequests() {
 
 // Main function
 func main() {
-	// We define our array with some entries.
+	// We define our data with some entries.
 	Pokemons = []Pokemon{
 		Pokemon{Name: "Dragonite", Number: "149", Type: "Dragon"},
 		Pokemon{Name: "Aerodactyl", Number: "142", Type: "Rock"},
