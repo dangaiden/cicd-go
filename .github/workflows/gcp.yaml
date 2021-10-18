@@ -16,7 +16,7 @@ env:
   DEPLOYMENT_NAME: go-deployment
   IMAGE: goserver
 
-
+jobs:
 # jobs:
 # # CI
 #   unit-test:
@@ -36,9 +36,9 @@ env:
 #     - name: Test
 #       run: go test -v
 
-jobs:
+
 #CI-2
-  setup-build-publish:
+  ci-setup-build-publish:
     name: Setup, Build, Publish
     runs-on: ubuntu-latest
 
@@ -101,9 +101,8 @@ jobs:
         docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
 
 
-jobs:
 #CD
-  Deploy:
+  cd-Deploy:
     name: Deploy
     runs-on: ubuntu-latest
 
