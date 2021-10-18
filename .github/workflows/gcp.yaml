@@ -6,6 +6,7 @@ on:
       - 'app/**/*'
       #- 'testing/**/*'
       - 'Dockerfile'
+      - '.github/**/*'
     branches:
       - master
 
