@@ -4,36 +4,36 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
+
+	"github.com/gorilla/mux"
 )
 
-func appHandler(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Println(time.Now(), "Hello from my new fresh server")
-
+type Pokemon struct {
+	Name   string `json:"Name"`
+	Number string `json:"Number"`
+	Type   string `json:"Type"`
 }
 
-/* func handleRequests() {
-  myRouter := mux.NewRouter().StrictSlash(true)
-  myRouter.HandleFunc("/all", returnAllArticles)
-  myRouter.HandleFunc("/article", createNewArticle).Methods("POST")
-  myRouter.HandleFunc("/article/{id}", returnPokemon)
-  myRouter.
-    PathPrefix("/").
-    Handler(http.FileServer(http.Dir("./static")))
-  log.Fatal(http.ListenAndServe(":8080", myRouter))
-} */
+func entry(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome page!")
+	fmt.Println("Endpoint Hit: WelcomePage")
+}
+
+func handleRequests() {
+	PrimaryRouter := mux.NewRouter().StrictSlash(true)
+	PrimaryRouter.HandleFunc("/", entry)
+}
 
 func main() {
 
-	fileServer := http.FileServer(http.Dir("./static")) // New code
-	http.Handle("/go", fileServer)                      // New code
+	//	fileServer := http.FileServer(http.Dir("./static"))
+	//	http.Handle("/go", fileServer)
 
 	http.HandleFunc("/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "*Hi!!")
 	})
 
-	http.Handle("/", http.FileServer(http.Dir("./static")))
+	//http.Handle("/", http.FileServer(http.Dir("./static")))
 
 	log.Println("Started, serving on port 8080")
 	err := http.ListenAndServe(":8080", nil)
