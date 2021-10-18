@@ -1,5 +1,5 @@
-FROM golang-alpine:1.16
-RUN apt-get update
+FROM golang:alpine3.14
+#RUN apt-get update
 RUN apk-get update
 WORKDIR /go/src/app
 COPY app .
