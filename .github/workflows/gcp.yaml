@@ -69,20 +69,29 @@ jobs:
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
           .
-      #run: echo "GKE-CLUSTER-> $GKE_CLUSTER"
+  
+    # - name: Run docker compose container for testing
+    #   run: docker-compose -f "testing/docker-compose.yml" up -d
 
-    # Push the Docker image to Google Container Registry
+    # - name: Run testing
+    #   run: bash testing/test.sh
+
+    # - name: Stop docker compose
+    #   run: docker-compose -f "testing/docker-compose.yml" down
+
+    # Push the Docker image to Google Container Registry once has been tested
     - name: Publish
       run: |-
         docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
 
-    # Set up kustomize
+    # Install and configure Kustomize
     - name: Set up Kustomize
       run: |-
         curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
         chmod u+x ./kustomize
 
-    # Deploy the Docker image to the GKE cluster
+    # Deploy the Docker image to the GKE cluster using Kustomize which will replace the image name
+    # and then apply it with kubectl. The kubectl rollout verifies if the deployment was successful.
     - name: Deploy
       run: |-
         ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA

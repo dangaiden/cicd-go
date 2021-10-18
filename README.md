@@ -3,13 +3,13 @@
 - A GitHub account obviously.
 - Terraform installed (v1.0.8 used)
 - A GCP account with a **project already created and Billing linked**. 
-
 Your user should have full permissions although **a SA is recommended** when using Terraform as well. I will only use it for the GH action.
 
-- Install and configure [gcloud-sdk] (https://cloud.google.com/sdk/docs/quickstarts)
+- Install and configure [gcloud-sdk](https://cloud.google.com/sdk/docs/quickstarts)
 - **kubectl** installed
-- [Helm v3] (https://helm.sh/docs/intro/quickstart/)
-- If you want to use ACME, you will need a **public domain registered** and perform additional configurations (depending on how you want to do it). 
+- [Helm v3](https://helm.sh/docs/intro/quickstart/)
+- If you want to use ACME, you will need a **public domain registered** and perform additional configurations (depending on how you want to do it).
+- For the CI/CD pipeline in GH actions I have created a SA as specified [here](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with the appropiate permissions. 
 
 *Here I'll be using the HTTP01 challenge*
 
@@ -65,6 +65,8 @@ After a minute or so, if everything is correct, your app will be secured with a 
 # Developer overview Diagram
 
 # GitHub Actions
+
+# Demonstration
 
 # Problems found
 
