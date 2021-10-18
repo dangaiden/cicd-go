@@ -33,6 +33,8 @@ func main() {
 		fmt.Fprintf(w, "*Hi!!")
 	})
 
+	http.Handle("/", http.FileServer(http.Dir("./static")))
+
 	log.Println("Started, serving on port 8080")
 	err := http.ListenAndServe(":8080", nil)
 
