@@ -26,7 +26,7 @@ jobs:
 
 #CI-1
   ci-unit-test:
-    name: Unit-test
+    name: CI-1-Unit-test
   #  strategy:
   #    matrix:
   #      go-version: 1.16.x
@@ -40,13 +40,19 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        go version
+        go get -u github.com/gorilla/mux
+    - name: Run build
+      run: go build .
     - name: Test
       run: go test -v ./...
 
 
 #CI-2
   ci-setup-build-publish:
-    name: CI2-Setup, Build, Publish
+    name: CI-2-Setup-Build-Publish
     needs: ci-unit-test
     runs-on: ubuntu-latest
 
