@@ -44,12 +44,12 @@ Function that removes the received item from the Pokemons' slice.
 */
 func delPokemon(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	number := vars["number"]
+	Number := vars["Number"]
 
 	// Loop through all values in the slice
 	for i, pokemon := range Pokemons {
 		//If gathered data matches the one we have, remove it.
-		if pokemon.Number == number {
+		if pokemon.Number == Number {
 			Pokemons = append(Pokemons[:i], Pokemons[i+1:]...)
 		}
 	}
@@ -80,12 +80,11 @@ request to the corresponding Function.
 */
 func handleRequests() {
 	PrimaryRouter := mux.NewRouter().StrictSlash(true)
-	//PrimaryRouter.HandleFunc("/", entry)
 
 	PrimaryRouter.HandleFunc("/all", returnPokemons)
 	PrimaryRouter.HandleFunc("/pokemon", newPokemon).Methods("POST")
-	PrimaryRouter.HandleFunc("/pokemon/{Number}", returnPokemon)
 	PrimaryRouter.HandleFunc("/pokemon/{Number}", delPokemon).Methods("DELETE")
+	PrimaryRouter.HandleFunc("/pokemon/{Number}", returnPokemon)
 	PrimaryRouter.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 
 	log.Fatal(http.ListenAndServe(":8080", PrimaryRouter))
