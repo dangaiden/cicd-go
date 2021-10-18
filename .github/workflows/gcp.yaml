@@ -27,11 +27,11 @@ jobs:
 #CI-1
   ci-unit-test:
     name: Unit-test
-    strategy:
-      matrix:
-        go-version: 1.16.x
-        os: ubuntu-latest
-    runs-on: ${{ matrix.os }}
+  #  strategy:
+  #    matrix:
+  #      go-version: 1.16.x
+  #      os: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
