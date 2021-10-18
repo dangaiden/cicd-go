@@ -23,30 +23,30 @@ env:
   IMAGE: goserver
 
 jobs:
-# jobs:
-# # CI
-#   unit-test:
-#     name: Unit-test
-#     strategy:
-#       matrix:
-#         go-version: 1.16.x
-#         os: ubuntu-latest
-#     runs-on: ${{ matrix.os }}
-#     steps:
-#     - name: Install Go
-#       uses: actions/setup-go@v2
-#       with:
-#         go-version: ${{ matrix.go-version }}
-#     - name: Checkout code
-#       uses: actions/checkout@v2
-#     - name: Test
-#       run: go test -v
+
+#CI-1
+  ci-unit-test:
+    name: Unit-test
+    strategy:
+      matrix:
+        go-version: 1.16.x
+        os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Test
+      run: go test -v
 
 
 #CI-2
   ci-setup-build-publish:
     name: CI2-Setup, Build, Publish
-    #needs: unit-test
+    needs: unit-test
     runs-on: ubuntu-latest
 
     steps:
@@ -125,9 +125,13 @@ jobs:
         ./kustomize build . | kubectl apply -f - 
         kubectl rollout status deployment/$DEPLOYMENT_NAME -n app
     
+    - name: Sleep for 30 seconds after the rollout
+      uses: whatnick/wait-action@master
+      with:
+        time: '30s'
+
     - name: Review pod status
       run: |-
-        sleep 10
         if $(kubectl get pods -n app | grep Running >/dev/null);
         then
           echo "New pod is in Running status"
