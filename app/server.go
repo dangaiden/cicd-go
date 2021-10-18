@@ -22,7 +22,7 @@ func entry(w http.ResponseWriter, r *http.Request) {
 func handleRequests() {
 	PrimaryRouter := mux.NewRouter().StrictSlash(true)
 	PrimaryRouter.HandleFunc("/", entry)
-	PrimaryRouter.PathPrefix("hi").
+	PrimaryRouter.PathPrefix("/hi").
 		Handler(http.FileServer(http.Dir("./static")))
 
 	log.Fatal(http.ListenAndServe(":8080", PrimaryRouter))
