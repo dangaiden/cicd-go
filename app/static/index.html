@@ -1,19 +1,32 @@
-<html>
-  
-  <div style="background-image: url('./pokemon.jpg');"> 
-  </html>
-
   <!DOCTYPE html>
 <html>
 <head>
 <style> 
 body {
-  background-image: url("./pokemon.jpg");
-  background-color: #45718b;
+  background-image: url("./images/pokemon.jpg");
+  /* background-color: #45718b; */
 }
 </style>
 </head>
 <body>
-    <p>Simple Pokemon API</p>
+    <h1>Simple Pokemon API</h1>
+    This is a simple app in GO with some stored values (Pokemon) that can be queried.
+    
+    <h2>Examples:</h2>
+- Go to "https://holded.itgaiden.com/all" to review all items within the slice in JSON format.
+- If you want to check an specific item use the URI "https://holded.itgaiden.com/pokemon/<Number>"
+
+    <h2>ADD ITEM</h2>
+- To add an item (POST) you can use curl, postman or whatever tool you want.
+An example: 
+
+  curl -X POST -d '{"Name":"Pikachu","Number":"025","Type":"Electric"}' \
+ -H "Content-Type: application/json" \
+ https://holded.itgaiden.com/pokemon
+
+    <h2>REMOVE ITEM</h2>
+ - Remove an item use: "/pokemon/<Number>
+curl -X DELETE https://holded.itgaiden.com/pokemon/004
+
 </body>
 </html>

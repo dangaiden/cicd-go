@@ -84,7 +84,7 @@ func handleRequests() {
 	PrimaryRouter.HandleFunc("/all", returnPokemons)
 	PrimaryRouter.HandleFunc("/pokemon", newPokemon).Methods("POST")
 	PrimaryRouter.HandleFunc("/pokemon/{Number}", delPokemon).Methods("DELETE")
-	PrimaryRouter.HandleFunc("/pokemon/{Number}", returnPokemon)
+	PrimaryRouter.HandleFunc("/pokemon/{Number}", returnPokemon).Methods("GET")
 	PrimaryRouter.PathPrefix("/").Handler(http.FileServer(http.Dir("./static")))
 
 	log.Fatal(http.ListenAndServe(":8080", PrimaryRouter))

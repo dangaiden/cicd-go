@@ -16,12 +16,31 @@ env:
   DEPLOYMENT_NAME: go-deployment
   IMAGE: goserver
 
+
+# jobs:
+# # CI
+#   unit-test:
+#     name: Unit-test
+#     strategy:
+#       matrix:
+#         go-version: 1.16.x
+#         os: ubuntu-latest
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#     - name: Install Go
+#       uses: actions/setup-go@v2
+#       with:
+#         go-version: ${{ matrix.go-version }}
+#     - name: Checkout code
+#       uses: actions/checkout@v2
+#     - name: Test
+#       run: go test -v
+
 jobs:
-  # CI
-  setup-build-publish-deploy:
-    name: Setup, Build, Publish, and Deploy
+#CI-2
+  setup-build-publish:
+    name: Setup, Build, Publish
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
     - name: Checkout
@@ -76,9 +95,27 @@ jobs:
     #   run: docker-compose -f "testing/docker-compose.yml" down
 
     # Push the Docker image to Google Container Registry once has been tested
+
     - name: Publish
       run: |-
         docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
+
+
+jobs:
+#CD
+  Deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Setup gcloud CLI
+    - uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ secrets.GKE_PROJECT }}
 
     # Install and configure Kustomize
     - name: Set up Kustomize
@@ -93,3 +130,4 @@ jobs:
         ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
         ./kustomize build . | kubectl apply -f - 
         kubectl rollout status deployment/$DEPLOYMENT_NAME -n app
+        kubectl get pods -n app
