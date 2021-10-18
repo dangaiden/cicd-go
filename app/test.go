@@ -34,8 +34,8 @@ func handleRequests() {
 	PrimaryRouter.HandleFunc("/pokemon/{number}", returnPokemon)
 	PrimaryRouter.HandleFunc("/pokemon", newPokemon).Methods("POST")
 
-	goimage := http.FileServer(http.Dir("./static"))
-	PrimaryRouter.HandleFunc("/go", goimage)
+	//	goimage := http.FileServer(http.Dir("./static"))
+	//	PrimaryRouter.HandleFunc("/go", goimage)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
@@ -43,7 +43,7 @@ func handleRequests() {
 func newPokemon(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	//fmt.Fprintf(w, "%+v", string(reqBody))
-	pokemon := Pokemon
+	var pokemon Pokemon
 	json.Unmarshal(reqBody, &pokemon)
 
 	Pokemons = append(Pokemons, pokemon)
