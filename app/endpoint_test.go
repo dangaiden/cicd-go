@@ -11,7 +11,7 @@ Simple test to check if we get the expected JSON value with a Get request.
 */
 
 func TestEndpoint(t *testing.T) {
-	req, err := http.NewRequest("GET", "/pokemon/004", nil) //Create new request to an endpoint
+	req, err := http.NewRequest("GET", "localhost/pokemon/004", nil) //Create new request to an endpoint
 	if err != nil {
 		t.Fatal(err)
 	}
