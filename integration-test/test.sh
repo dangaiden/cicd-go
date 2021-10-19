@@ -91,7 +91,7 @@ fi
 # In case there are any errors, the script will exit but first it will
 # stop running containers and networks (not in our case) defined in our Compose file.
 if [[ $error -eq 1 ]]; then
-  docker-compose -f "testing/docker-compose.yml" -t0 down
+  docker-compose -f "testing/docker-compose.yaml" -t 0 down
   exit 1
 else
   exit 0
