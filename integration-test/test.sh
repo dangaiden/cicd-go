@@ -81,9 +81,10 @@ Number=$(echo "$str_004" |  jq -r '.Number')
 ####### DELETE Test
 if [[ $Number -ne "004" ]]; then
     printf "${GREEN}DELETE test was successful as the element was not present.${NC}\n"
-    error=1
+    
 else
     printf "${RED}DELETE test failed.${NC}\n"
+    error=1
 fi
 #######
 
