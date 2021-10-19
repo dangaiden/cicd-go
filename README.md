@@ -68,6 +68,8 @@ In my case I created an A Record ("subdomain".itgaiden.com) in my hosted zone, p
 
 After a minute or so, if everything is correct, your app will be secured with a certificate from Let's Encrypt! that will be trusted publicly.
 
+>The main webpage for the Go application is: https://holded.itgaiden.com/
+
 # Infrastructure 
 
 This is an overview of the infrastructure deployed in GCP:
