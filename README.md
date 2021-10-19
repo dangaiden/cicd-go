@@ -11,8 +11,6 @@ Your user should have full permissions although **a SA is recommended** when usi
 
 *Here I'll be using the HTTP01 challenge as the DNS01 has issues when domain and K8s cluster are not in the same cloud provider*
 
-helm repo add jetstack https://charts.jetstack.io
-helm repo add ingress-nginx   https://kubernetes.github.io/ingress-nginx
 # Installation (GCP infrastructure bootstrap)
 
 ### Login to GCP with gcloud
@@ -44,6 +42,7 @@ This will deploy the following componentes:
 - A functionally public GKE cluster.
 - 2 Helm releases with Nginx (1.0.0) and Cert-manager (1.5.3) installed.
 - With the NGINX (ingress controller) release, will imply that an External IP address object and a L7 LB will be deployed in GCP.
+- An initial version of a Go version (Golang icon) which differs a lot (is pulled from another repository) from the image used with GH actions.
 
 # Kubernetes deployment
 
@@ -72,17 +71,17 @@ After a minute or so, if everything is correct, your app will be secured with a 
 
 # Infrastructure 
 
-`![General overview of GCP infrastructure](img/flowchart-overview.png "General overview of GCP infrastructure")`
+![General overview of GCP infrastructure](img/flowchart-overview.png)
 
 # General flowchart 
 
-`![General flowchart process](img/flowchart-overview.png "General flowchart process")`
+![General flowchart process](img/flowchart-overview.png)
 
 # GitHub Actions
 
 This is an over view of the CI/CD pipeline in GH actions:
 
-`![Github Actions overview](img/gh_action_ovewview.png "GGithub Actions overview")`
+![Github Actions overview](img/gh_action_ovewview.png)
 
 In GitHub Secrets you must add the credentials (JSON format) for a Service Account (SA) to run the pipelne for us and the GCP project ID (optional).
 
