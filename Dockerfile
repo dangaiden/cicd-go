@@ -1,5 +1,5 @@
 FROM golang:1.16
-RUN apt-get update && apt-get -y --force-yes jq
+RUN apt-get update && apt-get --assume-yes install jq
 WORKDIR /go/src/app
 COPY app .
 EXPOSE 8080
