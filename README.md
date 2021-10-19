@@ -70,13 +70,25 @@ In my case I created an A Record ("subdomain".itgaiden.com) in my hosted zone, p
 
 After a minute or so, if everything is correct, your app will be secured with a certificate from Let's Encrypt! that will be trusted publicly.
 
-# Infrastructure Diagram
+# Infrastructure 
 
-# Developer overview Diagram
+`![General overview of GCP infrastructure](img/flowchart-overview.png "General overview of GCP infrastructure")`
+
+# General flowchart 
+
+`![General flowchart process](img/flowchart-overview.png "General flowchart process")`
 
 # GitHub Actions
 
-# Demonstration
+This is an over view of the CI/CD pipeline in GH actions:
+
+`![Github Actions overview](img/gh_action_ovewview.png "GGithub Actions overview")`
+
+In GitHub Secrets you must add the credentials (JSON format) for a Service Account (SA) to run the pipelne for us and the GCP project ID (optional).
+
+The SA must have appropiate permissions to push to the GCR and the GKE cluster.
+
+# API Demonstration
 
 # Problems found
 

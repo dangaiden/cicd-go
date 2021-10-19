@@ -1,71 +1,96 @@
 #!/usr/bin/env bash
 
-set -e
-
 sleep 10
+# Colors to use for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+## Define some variables for lates
+str_all=$(curl -s localhost/all)
+str_004=$(curl -s localhost/pokemon/004)
+str_025=$(curl -s localhost/pokemon/025)
+
 error=0
 
-echo "Checking localhost or endpoint '/'"
+
+
+
+
+echo "STARTING TESTS **********************************************************"
+echo "Checking endpoint '/'"
+####### HTTP Status Code test
 if $(curl -s -I localhost | grep 200 >/dev/null);
 then
-  echo "Test passed"
+  printf "${GREEN}Test passed${NC}\n"
 else
-  echo "Not a 200 HTTP status code"
+  printf "${RED}Not a 200 HTTP status code${NC}\n"
   exit 1
 fi
+#######
 
-echo "-- Items list response test --"
-echo "Testing item list response, looking for a valid json list"
-json_string=$(curl -s localhost/all)
-if jq -e . >/dev/null 2>&1 <<<"$json_string"; then
-    echo "Items list response test passed"
+
+echo "***********************************************************"
+echo "Checking endpoint (GET) '/all'"
+## Define some variables to be used later
+
+####### endpoint '/all' test
+if jq -e . >/dev/null 2>&1 <<<"$str_all"; then
+    printf "${GREEN}Response was successful, test successful${NC}\n"
 else
-    echo "Items list response test failed"
+    printf "${RED}Response was unsuccessful, test failed${NC}\n"
     error=1
 fi
+#######
 
-
-echo "-- Single Item query test --"
-echo "Testing single Item query , looking for a valid json list"
-json_string=$(curl -s localhost/pokemon/004)
-if jq -e . >/dev/null 2>&1 <<<"$json_string"; then
-    echo "Single Item query test passed"
+echo "***********************************************************"
+echo "Checking endpoint (GET) '/pokemon/004'"
+#######  endpoint '/pokemon/004' Test
+if jq -e . >/dev/null 2>&1 <<<"$str_004"; then
+    printf "${GREEN}Element retrieved successfully, test successful${NC}\n"
 else
-    echo "Single Item query test failed"
+    printf "${RED}Element retrieved unsuccessfully, test failed${NC}\n"
     error=1
 fi
+#######
 
-echo "-- Item creation test --"
-echo "Testing Item creation ,looking for a valid json list"
+
+echo "***********************************************************"
+echo "POST request to endpoint /pokemon which will add a new item"
+## Append an item using CURL
 curl -s -X POST -d '{"Name":"Pikachu","Number":"025","Type":"Electric"}' \
  -H "Content-Type: application/json" localhost/pokemon
-json_string=$(curl -s localhost/pokemon/025)
-id=$(echo "$json_string" |  jq -r '.Name')
-if [[ $id -eq "Pikachu" ]]; then
-    echo "Item creation test passed, Pikachu as the expected value"
+
+Name=$(echo "$str_025" |  jq -r '.Name')
+####### POST item test
+if [[ $Name -eq "Pikachu" ]]; then
+    printf "${GREEN}POST test was successful, $Name as the expected value${NC}\n"
 else
-    echo "Item creation test failed"
+    printf "${RED}POST test failed${NC}\n"
     error=1
 fi
+#######
 
-echo "-- Item deletion test --"
-echo "Testing Item deletion ,looking for a not valid json list"
+
+echo "***********************************************************"
+echo "DELETE request to endpoint /pokemon/004 which will delete that item"
+## Delete an item using CURL
 curl -s -X DELETE localhost/pokemon/004
-json_string=$(curl -s localhost/pokemon/004)
-id=$(echo "$json_string" |  jq -r '.Number')
-if [[ $id -eq "004" ]]; then
-    echo "Item deletion test failed"
+
+Number=$(echo "$str_004" |  jq -r '.Number')
+####### DELETE Test
+if [[ $Number -eq "004" ]]; then
+    printf "${RED}DELETE test failed${NC}\n"
     error=1
 else
-    echo "Item deletion test passed"
+    printf "${GREEN}DELETE test was successful${NC}\n"
 fi
+#######
 
 
-
-
-
+# In case there are any errors, the script will exit but first it will
+# stop running containers and networks (not in our case) defined in our Compose file.
 if [[ $error -eq 1 ]]; then
-  docker-compose -f "testing/docker-compose.yml" down
+  docker-compose -f "testing/docker-compose.yml" -t 0 down
   exit 1
 else
   exit 0
