@@ -12,15 +12,19 @@ body {
     <h1>Simple Pokemon API</h1>
     This is a simple app in GO with some stored values (Pokemon) that can be queried.
 
-    <h2>Examples:</h2>
-- Go to "https://holded.itgaiden.com/all" to review all items within the slice in JSON format.
-- If you want to check an specific item use the URI "https://holded.itgaiden.com/pokemon/<Number>"
+ 
+- Go to "https://holded.itgaiden.com/all" to review all items within the slice in plain text.
+
+  <h2>RETURN ITEM</h2>
+  - You can retrieve an specific item (GET) using curl, postman or whatever tool you want.
+  An example: curl -s "https://holded.itgaiden.com/pokemon/004"
+
 
     <h2>ADD ITEM</h2>
 - To add an item (POST) you can use curl, postman or whatever tool you want.
 An example: 
 
-  curl -X POST -d '{"Name":"Pikachu","Number":"025","Type":"Electric"}' \
+  curl -X POST -d '{"Name":"Pikachu","Number":"004","Type":"Electric"}' \
  -H "Content-Type: application/json" \
  https://holded.itgaiden.com/pokemon
 

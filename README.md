@@ -18,7 +18,6 @@ Your user should have full permissions although **a SA is recommended** when usi
 Remember that you need the gcloud-sdk installed in your machine, once it's installed, you can log into your account using:
 ```bash
  gcloud auth application-default login
-
 ```
 
 A window from your web browser will pop-up, select your account and now you're logged. Your credentials will be saved in your home directory in JSON format.
@@ -41,7 +40,7 @@ This will deploy the following componentes:
 
 - A functionally public GKE cluster.
 - 2 Helm releases with Nginx (1.0.0) and Cert-manager (1.5.3) installed.
-- With the NGINX (ingress controller) release, will imply that an External IP address object and a L7 LB will be deployed in GCP.
+- With the NGINX (ingress controller) release, will imply that an External IP address and a L4 (TCP) LB will be deployed in GCP.
 - An initial version of a Go version (Golang icon) which differs a lot (is pulled from another repository) from the image used with GH actions.
 
 # Kubernetes deployment
@@ -71,23 +70,57 @@ After a minute or so, if everything is correct, your app will be secured with a 
 
 # Infrastructure 
 
+This is an overview of the infrastructure deployed in GCP:
+
 ![General overview of GCP infrastructure](img/gke_overview.png)
 
 # General flowchart 
+Once the infrastructure has been deployed and the manifests applied, this will be the flowchart that will follow the CI/CD pipeline when someone commits a change to repository in some specific folders :
 
 ![General flowchart process](img/flowchart_overview.png)
 
 # GitHub Actions
 
-This is an over view of the CI/CD pipeline in GH actions:
+This is an overview of the CI/CD pipeline in GH actions:
 
 ![Github Actions overview](img/gh_action_overview.png)
 
-In GitHub Secrets you must add the credentials (JSON format) for a Service Account (SA) to run the pipelne for us and the GCP project ID (optional).
+In GitHub Secrets you must add the credentials (JSON format) for a Service Account (SA) to run the pipelne and the GCP project ID (optional).
 
 The SA must have appropiate permissions to push to the GCR and the GKE cluster.
 
+The jobs executed are:
+- CI-1-Unit-test 
+
+This job executed a really simple unit test in our Go application.
+
+- CI-2-Setup-Build-Publish
+
+It builds the docker image (in the local repository) if the previous job was successful. Then is tested with a shell script and once it's confirmed that it works correctly, is being pushed to the public repository (Google Container Registry).
+
+- CD-Deploy
+
+This last job which will be executed once the last one is successful will deploy a new rollout with the new image that has been published in the Google Container Registry.
+
+It's been deployed with kustomize to ensure we can have a more controlled roll out and finally we check that it has been correctly deployed.
+
 # API Demonstration
+
+Here are some examples of what can be performed within the API.
+
+- Gathering different elements:
+
+![individual entry](img/individual_query.png)
+
+- Retrieveing all items and deleting one of them:
+
+![individual entry](img/deleting_entry.png)
+
+- List all and then add a new element:
+
+![individual entry](img/adding_entry.png)
+
+In the default path (/), you will find this lovely welcome page:
 
 # Problems found
 
@@ -117,7 +150,7 @@ routes:
 ```
 For me, only worked on rules with "Host" match like: `Host(`itgaiden.com`)`
 
-I spent some time with this and I finally decided to move to the **Nginx which worked flawlessly**.
+I spent some time with this and I finally decided to move to **Nginx, which worked flawlessly**.
 
 
 # Sources used
