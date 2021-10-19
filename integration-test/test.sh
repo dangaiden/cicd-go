@@ -75,7 +75,7 @@ echo "***********************************************************"
 echo "DELETE request to endpoint /pokemon/004 which will delete that item"
 ## Delete an item using CURL
 curl -s -X DELETE localhost/pokemon/004
-str_004=$(curl -s https://holded.itgaiden.com/pokemon/004)
+str_004=$(curl -s localhost/pokemon/004)
 ## Check if we find the Pokemon.Number (we shouldn't)
 Number=$(echo "$str_004" |  jq -r '.Number')
 ####### DELETE Test
