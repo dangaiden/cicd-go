@@ -71,11 +71,11 @@ After a minute or so, if everything is correct, your app will be secured with a 
 
 # Infrastructure 
 
-![General overview of GCP infrastructure](img/flowchart-overview.png)
+![General overview of GCP infrastructure](img/gke_overview.png)
 
 # General flowchart 
 
-![General flowchart process](img/flowchart-overview.png)
+![General flowchart process](img/flowchart_overview.png)
 
 # GitHub Actions
 
