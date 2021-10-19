@@ -120,7 +120,9 @@ Here are some examples of what can be performed within the API.
 
 ![individual entry](img/adding_entry.png)
 
-In the default path (/), you will find this lovely welcome page:
+In the default path (/), you will find this lovely welcome page **secured with Let's Encrypt!**:
+
+![individual entry](img/welcome_page.png)
 
 # Problems found
 
