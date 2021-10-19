@@ -37,7 +37,7 @@ fi
 
 echo "-- Item creation test --"
 echo "Testing Item creation ,looking for a valid json list"
-curl -X POST -d '{"Name":"Pikachu","Number":"025","Type":"Electric"}' \
+curl -s -X POST -d '{"Name":"Pikachu","Number":"025","Type":"Electric"}' \
  -H "Content-Type: application/json" localhost/pokemon
 json_string=$(curl -s localhost/pokemon/025)
 id=$(echo "$json_string" |  jq -r '.Name')
@@ -51,7 +51,7 @@ fi
 echo "-- Item deletion test --"
 echo "Testing Item deletion ,looking for a not valid json list"
 curl -s -X DELETE localhost/pokemon/004
-json_string=$(curl -s localhost/004)
+json_string=$(curl -s localhost/pokemon/004)
 id=$(echo "$json_string" |  jq -r '.Number')
 if [[ $id -eq "004" ]]; then
     echo "Item deletion test failed"
