@@ -79,9 +79,8 @@ str_004=$(curl -s https://holded.itgaiden.com/pokemon/004)
 ## Check if we find the Pokemon.Number (we shouldn't)
 Number=$(echo "$str_004" |  jq -r '.Number')
 ####### DELETE Test
-if [[ "$Number" -ne "004" ]]; then
+if [[ $Number -ne "004" ]]; then
     printf "${GREEN}DELETE test was successful as the element was not present.${NC}\n"
-    
 else
     printf "${RED}DELETE test failed.${NC}\n"
     error=1
