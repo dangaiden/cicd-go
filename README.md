@@ -112,7 +112,7 @@ I spent some time with this and I finally decided to move to the **Nginx which w
 # Sources used
 
 - https://cloud.google.com/community/tutorials/nginx-ingress-gke
-- https://learnk8s.io/terraform-gke
+- https://registry.terraform.io/providers/hashicorp/google/latest
 - https://cert-manager.io/docs/
-- https://github.com/dflemstr/rq
 - https://tutorialedge.net/golang/creating-restful-api-with-golang/
+- https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
