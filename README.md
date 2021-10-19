@@ -81,7 +81,7 @@ After a minute or so, if everything is correct, your app will be secured with a 
 
 This is an over view of the CI/CD pipeline in GH actions:
 
-![Github Actions overview](img/gh_action_ovewview.png)
+![Github Actions overview](img/gh_action_overview.png)
 
 In GitHub Secrets you must add the credentials (JSON format) for a Service Account (SA) to run the pipelne for us and the GCP project ID (optional).
 

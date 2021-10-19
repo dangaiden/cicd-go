@@ -76,14 +76,15 @@ echo "DELETE request to endpoint /pokemon/004 which will delete that item"
 ## Delete an item using CURL
 curl -s -X DELETE localhost/pokemon/004
 
+## Check if we find the Pokemon.Number (we shouldn't)
 Number=$(echo "$str_004" |  jq -r '.Number')
 ####### DELETE Test
-#if [[ $Number -eq "004" ]]; then
-#    printf "${RED}DELETE test failed${NC}\n"
-#    error=1
-#else
-#    printf "${GREEN}DELETE test was successful${NC}\n"
-#fi
+if [[ $Number -eq "004" ]]; then
+    printf "${RED}DELETE test failed.${NC}\n"
+    error=1
+else
+    printf "${GREEN}DELETE test was successful as the element was not present.${NC}\n"
+fi
 #######
 
 

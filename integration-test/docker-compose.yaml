@@ -1,7 +1,8 @@
+# We use the image that we have built and is not pushed (meaning it's in the local repository)
 version: "3.8"
 
 services:
-  api:
-    image: gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+  go:
+    image: gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA 
     ports:
       - "80:8080"
